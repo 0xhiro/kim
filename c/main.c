@@ -26,7 +26,7 @@ void write_file(char *filename, char *contents) {
 }
 
 void kim_log(char *log) {
-  FILE *file = fopen("./kim_logs.txt", "a"); // open file for writing
+  FILE *file = fopen("./target/kim_logs.txt", "a"); // open file for writing
 
   if (file == NULL) {
     printf("Error opening file!\n");
@@ -40,7 +40,7 @@ void kim_log(char *log) {
 }
 
 void process_input() {
-  char *filename = "test.txt";
+  char *filename = "./test/test.txt";
   char text_buffer[100]; // string to store user input
   int i = 0;             // index for str
 
