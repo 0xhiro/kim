@@ -33,4 +33,4 @@ run: make_dir ./target/kim
 
 tail:
 	clear
-	tail -F test.txt
+	tail -F ./test/test.txt
