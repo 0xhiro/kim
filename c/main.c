@@ -14,25 +14,23 @@
 int main() {
   clear_logs();
 
-  kim_log("starting execution....");
+  kim_log("starting execution...............................................................");
 
   char *file_path = "./test/test.txt";
-
-  view_t *view = init_view();
 
   buffer_t *buffer = init_buffer();
   read_file_to_buffer(buffer, file_path);
 
-  draw_footer();
-  draw_line_numbers();
-  
-  // for(;;) {}
+   // for(;;) {}
+
+  view_t *view = init_view();
+
   process_input(view, buffer);
 
   exit_view(view);
   free_buffer(buffer);
 
-  kim_log("stopping execution....");
+  kim_log("stopping execution................................................................");
   dump_logs();
 
   return 0;

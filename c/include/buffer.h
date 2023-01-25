@@ -8,8 +8,6 @@ typedef struct BUFFER_STRUCT {
 
 buffer_t *init_buffer();
 
-void save_buffer(buffer_t *buffer);
-
 void free_buffer(buffer_t *buffer);
 
 void write_char_to_buffer(buffer_t *buffer, char ch, int cursor);

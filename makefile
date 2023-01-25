@@ -31,6 +31,9 @@ run: make_dir ./target/kim
 	make all
 	./target/kim $(test_file)
 
+logs:
+	cat ./target/kim-logs.txt
+
 tail:
 	clear
-	tail -F ./test/test.txt
+	tail -F $(test_file)

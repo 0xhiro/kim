@@ -17,7 +17,7 @@ void write_file(char *filename, char *contents) {
 }
 
 void kim_log(char *log) {
-  char* logs_path = "./target/kim_logs.txt";
+  char* logs_path = "./target/kim-logs.txt";
   FILE *file = fopen(logs_path, "a"); // open file for writing
 
   if (file == NULL) {
@@ -38,7 +38,7 @@ void dump_logs() {
 
 
 void clear_logs() {
-  write_file("./target/kim_logs.txt", "");
+  write_file("./target/kim-logs.txt", "");
 }
 
 char *read_file_to_string(const char *filename) {
