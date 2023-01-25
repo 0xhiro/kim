@@ -7,7 +7,7 @@ void update_screen(char ch);
 
 void write_file(char *filename, char *contents);
 
-void kim_log(char *log);
+void kim_log(const char *format, ...);
 
 int file_has_extension(const char *file_name, const char *extension);
 

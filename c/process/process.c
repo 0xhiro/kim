@@ -8,10 +8,7 @@
 void process_input(process_t *process, view_t *view, buffer_t *buffer) {
   int updated_view = 0;
   int content_changed = 1;
-  
-
-  int pos = 0;
-  char buff[1024];
+  int window_resized = 0;  
 
   while (1) {
     if (content_changed) {

@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include "include/utils.h"
 
@@ -16,19 +17,24 @@ void write_file(char *filename, char *contents) {
   fclose(file);                  // close the file
 }
 
-void kim_log(char *log) {
-  char* logs_path = "./target/kim-logs.txt";
+void kim_log(const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+
+  char *logs_path = "./target/kim-logs.txt";
   FILE *file = fopen(logs_path, "a"); // open file for writing
 
   if (file == NULL) {
     printf("Error opening file!\n");
+    va_end(args);
     return;
   }
 
-  fprintf(file, "%s", log);  // write contents to file
-  fprintf(file, "%s", "\n"); // write contents to file
+  vfprintf(file, format, args); // write contents to file
+  fprintf(file, "%s", "\n");    // write newline to file
 
   fclose(file); // close the file
+  va_end(args);
 }
 
 void dump_logs() {
@@ -36,15 +42,12 @@ void dump_logs() {
   puts(logs);
 }
 
-
-void dump_file(char* filename) {
+void dump_file(char *filename) {
   char *logs = read_file_to_string(filename);
   puts(logs);
 }
 
-void clear_logs() {
-  write_file("./target/kim-logs.txt", "");
-}
+void clear_logs() { write_file("./target/kim-logs.txt", ""); }
 
 char *read_file_to_string(const char *filename) {
   FILE *file = fopen(filename, "r");
