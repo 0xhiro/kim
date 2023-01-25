@@ -23,6 +23,10 @@ int main() {
   buffer_t *buffer = init_buffer();
   read_file_to_buffer(buffer, file_path);
 
+  draw_footer();
+  draw_line_numbers();
+  
+  // for(;;) {}
   process_input(view, buffer);
 
   exit_view(view);

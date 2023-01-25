@@ -1,11 +1,8 @@
-#include <curses.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "include/utils.h"
-
-void update_screen(char ch) { addch(ch); }
 
 void write_file(char *filename, char *contents) {
   FILE *file = fopen(filename, "w"); // open file for writing

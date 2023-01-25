@@ -12,4 +12,8 @@ void exit_view(view_t *view);
 
 view_t *init_view();
 
+void draw_footer();
+
+void draw_line_numbers();
+
 #endif

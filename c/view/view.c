@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
 
@@ -31,3 +32,14 @@ view_t *init_view() {
 
   return view;
 }
+
+void draw_footer() {
+  // Change the background color to blue
+  // printf("\033[44m");
+
+  // Fill the entire line with blue background
+  // printf("\033[%dC", 10);
+  // Reset the background color to default
+}
+
+void draw_line_numbers() {}

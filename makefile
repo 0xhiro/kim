@@ -25,7 +25,7 @@ clean: make_dir
 	rm target/*
 
 ./target/kim: make_dir ./c/include/*.h $(sources)
-	gcc -g -o $@ $(sources) -lncurses
+	gcc -g -o $@ $(sources)
  
 run: make_dir ./target/kim 
 	make all
