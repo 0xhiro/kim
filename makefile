@@ -4,7 +4,7 @@ test_file = $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
 all_tests = $(wildcard test/*)
 
-sources = $(wildcard c/*.c)
+sources = $(wildcard c/*.c c/process/*.c c/view/*.c c/buffer/*.c)
 
 all: make_dir ./target/kim
 
