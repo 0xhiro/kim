@@ -9,29 +9,35 @@
 #include <termios.h>
 #include <unistd.h>
 
-#define MAX_SIZE 1024
-
 int main() {
   clear_logs();
 
-  kim_log("starting execution...............................................................");
+  kim_log("starting "
+          "execution..........................................................."
+          "....");
 
   char *file_path = "./test/test.txt";
 
   buffer_t *buffer = init_buffer();
   read_file_to_buffer(buffer, file_path);
 
-   // for(;;) {}
+  // for(;;) {}
 
   view_t *view = init_view();
 
-  process_input(view, buffer);
+  process_t *process = init_process();
 
+  process_input(process, view, buffer);
+
+  free_process(process);
   exit_view(view);
   free_buffer(buffer);
 
-  kim_log("stopping execution................................................................");
-  dump_logs();
+  kim_log("stopping "
+          "execution..........................................................."
+          ".....");
+  // dump_logs();
+  dump_file(file_path);
 
   return 0;
 }

@@ -32,10 +32,15 @@ void kim_log(char *log) {
 }
 
 void dump_logs() {
-  char *logs = read_file_to_string("./target/kim_logs.txt");
+  char *logs = read_file_to_string("./target/kim-logs.txt");
   puts(logs);
 }
 
+
+void dump_file(char* filename) {
+  char *logs = read_file_to_string(filename);
+  puts(logs);
+}
 
 void clear_logs() {
   write_file("./target/kim-logs.txt", "");
