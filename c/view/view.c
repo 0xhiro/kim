@@ -35,13 +35,22 @@ int update_view() {
 void draw_footer() {
   kim_log("drawing footer");
 
+  struct winsize view_size = get_view_size();
+
   set_color(RED);
   set_background_color(WHITE);
-  for (int i = 0; i < 20; i++) {
+  for (int i = 0; i < view_size.ws_col; i++) {
     putchar(' ');
   }
   reset_color();
   reset_background_color();
+}
+
+struct winsize get_view_size() {
+  struct winsize view_size;
+  ioctl(0, TIOCGWINSZ, &view_size);
+
+  return view_size;
 }
 
 void draw_line_numbers() {}
@@ -86,13 +95,9 @@ void set_color(color_t color) {
   }
 }
 
-void reset_color() {
-  set_color(DEFAULT);
-}
+void reset_color() { set_color(DEFAULT); }
 
-void reset_background_color() {
-  set_background_color(DEFAULT);
-}
+void reset_background_color() { set_background_color(DEFAULT); }
 
 void set_background_color(color_t color) {
   switch (color) {
@@ -140,7 +145,7 @@ void clear_view() {
 
 void exit_view(view_t *view) {
   tcsetattr(STDIN_FILENO, TCSANOW, &view->oldt);
-  
+
   set_color(DEFAULT); // Reset text color to default
   set_background_color(DEFAULT);
 

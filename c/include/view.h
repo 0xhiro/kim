@@ -22,6 +22,8 @@ typedef enum {
   DEFAULT
 } color_t;
 
+struct winsize get_view_size();
+
 void set_color(color_t color);
 
 void reset_background_color();

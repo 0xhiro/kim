@@ -2,32 +2,51 @@
 #include "../include/buffer.h"
 #include "../include/utils.h"
 #include "../include/view.h"
+#include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 
 void process_input(process_t *process, view_t *view, buffer_t *buffer) {
   int updated_view = 0;
-  int content_changed = 1;
-  int window_resized = 0;  
+  int key_pressed = 0;
+  int window_resized = 0;
+
+  int former_rows = 0;
+  int former_cols = 0;
+
+  struct pollfd fds;
+
+  fds.fd = 0;
+  fds.events = POLLIN;
 
   while (1) {
-    if (content_changed) {
-      updated_view = update_view();
-      content_changed = 0;
+    key_pressed = poll(&fds, 1, 0);
+
+    struct winsize view_size = get_view_size();
+    if (former_rows != view_size.ws_row || former_cols != view_size.ws_col) {
+      window_resized = 1;
+      former_cols = view_size.ws_col;
+      former_rows = view_size.ws_row;
     }
 
-    char ch = getchar();
+    if (key_pressed || window_resized) {
+      update_view();
+      window_resized = 0;
+    }
 
-    if (process->mode == NORMAL) {
-      int quit = process_normal(process, ch, buffer);
-      if (quit) {
-        return;
+    if (key_pressed == 1) {
+      char ch = getchar();
+
+      if (process->mode == NORMAL) {
+        int quit = process_normal(process, ch, buffer);
+        if (quit) {
+          return;
+        }
+      } else if (process->mode == INSERT) {
+        process_insert(process, ch, buffer);
       }
-    } else if (process->mode == INSERT) {
-      process_insert(process, ch, buffer);
     }
-
-    updated_view = 0;
   }
 }
 
