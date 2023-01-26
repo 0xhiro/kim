@@ -5,10 +5,10 @@
 #include <poll.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 
 void process_input(process_t *process, view_t *view, buffer_t *buffer) {
-  int updated_view = 0;
   int key_pressed = 0;
 
   struct pollfd fds;
@@ -18,16 +18,14 @@ void process_input(process_t *process, view_t *view, buffer_t *buffer) {
 
   update_view(view, buffer); // initial view render
   while (1) {
-    key_pressed = poll(&fds, 1, 0);
-
     if (key_pressed) {
       update_view(view, buffer);
     }
 
-    // FIXME: fix continuos rendering to fix flicker
-    // update_view(view, buffer);
+    key_pressed = poll(&fds, 1, 0);
 
     if (key_pressed) {
+
       char ch = getchar();
 
       if (process->mode == NORMAL) {
@@ -85,7 +83,11 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
   return 0;
 }
 
-void move_right(buffer_t *buffer) { buffer->cursor++; }
+void move_right(buffer_t *buffer) {
+  if (strlen(buffer->content) + 1 > buffer->cursor + 1) {
+    buffer->cursor++;
+  }
+}
 
 void move_left(buffer_t *buffer) {
   if (buffer->cursor > 1) {

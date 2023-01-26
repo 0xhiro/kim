@@ -34,7 +34,7 @@ int update_view(view_t *view, buffer_t *buffer) {
 
   draw_footer();
 
-  // print_content(view, buffer);
+  print_content(view, buffer);
 
   set_cursor(buffer->cursor, buffer->line);
 
