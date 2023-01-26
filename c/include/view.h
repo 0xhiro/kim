@@ -1,6 +1,7 @@
 #ifndef VIEW_H
 #define VIEW_H
 
+#include "buffer.h"
 #include <termios.h>
 
 typedef struct VIEW_STRUCT {
@@ -24,9 +25,24 @@ typedef enum {
   DEFAULT
 } color_t;
 
+typedef enum {
+  SHAPE_DEFAULT,
+  SHAPE_BLOCK,
+  SHAPE_UNDERLINE,
+  SHAPE_BAR
+} cursor_shape_t;
+
+typedef enum {
+  STYLE_BLINKING,
+  STYLE_STEADY,
+  STYLE_INVISIBLE
+} cursor_style_t;
+
 struct winsize get_view_size();
 
-void window_resize_handler(int sig);
+void window_resize_handler(int sig, view_t *view, buffer_t *buffer);
+
+void print_content(view_t *view, buffer_t *buffer);
 
 void set_color(color_t color);
 
@@ -46,6 +62,12 @@ void draw_footer();
 
 void draw_line_numbers();
 
-int update_view();
+int update_view(view_t *view, buffer_t *buffer);
+
+void set_cursor_shape(cursor_shape_t shape);
+
+void set_cursor_style(cursor_style_t style);
+
+void set_cursor(int row, int column);
 
 #endif

@@ -28,34 +28,89 @@ view_t *init_view() {
   return view;
 }
 
-int update_view() {
-  kim_log("updating view");
+int update_view(view_t *view, buffer_t *buffer) {
+  // kim_log("updating view");
   clear_view();
 
   draw_footer();
 
+  print_content(view, buffer);
+
+  set_cursor(buffer->cursor.x, buffer->cursor.y);
+
   return 1;
 }
 
-void window_resize_handler(int sig) { update_view(); }
+void window_resize_handler(int sig, view_t *view, buffer_t *buffer) {
+  update_view(view, buffer);
+}
 
 void draw_footer() {
-  kim_log("drawing footer");
+  // kim_log("drawing footer");
 
   struct winsize view_size = get_view_size();
 
+  printf("\033[%d;0H", view_size.ws_row - 1);
   set_color(RED);
   set_background_color(WHITE);
   for (int i = 0; i < view_size.ws_col; i++) {
     putchar(' ');
   }
+
+  // set_cursor_shape(SHAPE_UNDERLINE);
+  // set_cursor_style(STYLE_BLINKING);
   reset_color();
   reset_background_color();
+}
+
+void print_content(view_t *view, buffer_t *buffer) {
+  set_cursor(0, 0);
+  printf("%s", buffer->content);
+}
+
+void set_cursor(int row, int column) { printf("\033[%d;%dH", row, column); }
+
+void set_cursor_shape(cursor_shape_t shape) {
+  switch (shape) {
+  case SHAPE_DEFAULT:
+    printf("\033[0;0H");
+    break;
+
+  case SHAPE_BAR:
+    printf("\033[0;3H");
+    break;
+
+  case SHAPE_BLOCK:
+    printf("\033[0;1H");
+    break;
+
+  case SHAPE_UNDERLINE:
+    printf("\033[0;2H");
+    break;
+  }
+}
+
+void set_cursor_style(cursor_style_t style) {
+  switch (style) {
+  case STYLE_BLINKING:
+    printf("\033[2m");
+    break;
+
+  case STYLE_STEADY:
+    printf("\033[0;1m");
+    break;
+
+  case STYLE_INVISIBLE:
+    printf("\033[0;2m");
+    break;
+  }
 }
 
 struct winsize get_view_size() {
   struct winsize view_size;
   ioctl(0, TIOCGWINSZ, &view_size);
+
+  // kim_log("rows: %s, columns: %s", view_size.ws_row, view_size.ws_col);
 
   return view_size;
 }

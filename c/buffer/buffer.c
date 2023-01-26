@@ -8,7 +8,8 @@ buffer_t *init_buffer() {
   buffer_t *buffer = calloc(1, sizeof(struct BUFFER_STRUCT));
   buffer->content = (void *)0;
   buffer->file_path = (void *)0;
-
+  buffer->cursor.x = 0;
+  buffer->cursor.y = 0;
   return buffer;
 }
 

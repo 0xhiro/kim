@@ -10,8 +10,11 @@
 #include <termios.h>
 #include <unistd.h>
 
+// FIXME: it seems the screen does not actually get cleared until a key is
+// pressed
+// FIXME: the screen resizes is very very buggy. only using fixed size for now
 int main() {
-  signal(SIGWINCH, window_resize_handler);
+  // signal(SIGWINCH, window_resize_handler);
 
   clear_logs();
 
@@ -42,6 +45,7 @@ int main() {
           ".....");
   // dump_logs();
   dump_file(file_path);
+  kim_log("\033c");
 
   return 0;
 }

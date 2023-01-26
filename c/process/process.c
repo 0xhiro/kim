@@ -16,15 +16,14 @@ void process_input(process_t *process, view_t *view, buffer_t *buffer) {
   fds.fd = 0;
   fds.events = POLLIN;
 
-  update_view();
+  update_view(view, buffer); // initial view render
   while (1) {
     key_pressed = poll(&fds, 1, 0);
 
-    if (key_pressed) {
-      update_view();
-    }
+    // FIXME: fix continuos rendering to fix flicker
+    //  update_view(view, buffer);
 
-    if (key_pressed == 1) {
+    if (key_pressed) {
       char ch = getchar();
 
       if (process->mode == NORMAL) {
@@ -36,11 +35,33 @@ void process_input(process_t *process, view_t *view, buffer_t *buffer) {
         process_insert(process, ch, buffer);
       }
     }
+
+    if (key_pressed) {
+      update_view(view, buffer);
+    }
   }
 }
 
-int process_normal(process_t *process, char c, buffer_t *buffer) {
-  switch (c) {
+int process_normal(process_t *process, char ch, buffer_t *buffer) {
+  if (ch == '\033') {
+    getchar(); // skip the [
+    switch (getchar()) {
+    case 'A':
+      buffer->cursor.y--; // up arrow
+      return 0;
+    case 'B':
+      buffer->cursor.y++; // down arrow
+      return 0;
+    case 'C':
+      buffer->cursor.x++; // right arrow
+      return 0;
+    case 'D':
+      buffer->cursor.x--; // arrow key
+      return 0;
+    }
+  }
+
+  switch (ch) {
   case 'q':
     kim_log("quiting...");
     return 1;
@@ -60,14 +81,35 @@ int process_normal(process_t *process, char c, buffer_t *buffer) {
   return 0;
 }
 
-void process_insert(process_t *process, char ch, buffer_t *buffer) {
-  if (ch == ESCAPE_CHAR) {
-    kim_log("changing to normal mode");
-    process->mode = NORMAL;
-    return;
+int process_insert(process_t *process, char ch, buffer_t *buffer) {
+  if (ch == '\033') {
+    getchar(); // skip the [
+    switch (getchar()) {
+    case 'A':
+      buffer->cursor.y--; // up arrow
+      return 0;
+    case 'B':
+      buffer->cursor.y++; // down arrow
+      return 0;
+    case 'C':
+      buffer->cursor.x++; // right arrow
+      return 0;
+    case 'D':
+      buffer->cursor.x--; // arrow key
+      return 0;
+    }
   }
 
-  putchar(ch);
+  switch (ch) {
+  case ESCAPE_CHAR:
+    kim_log("changing to normal mode");
+    process->mode = NORMAL;
+    return 1;
+  }
+
+  buffer->content[buffer->cursor.x] = ch;
+
+  return 0;
 }
 
 process_t *init_process() {

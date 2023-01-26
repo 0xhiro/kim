@@ -1,9 +1,15 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+typedef struct CURSOR_STRUCT {
+  int x;
+  int y;
+} cursor_t;
+
 typedef struct BUFFER_STRUCT {
   char *content;
   char *file_path;
+  cursor_t cursor;
 } buffer_t;
 
 buffer_t *init_buffer();
