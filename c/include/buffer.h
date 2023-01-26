@@ -1,18 +1,15 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
-typedef struct CURSOR_STRUCT {
-  int x;
-  int y;
-} cursor_t;
-
 typedef struct BUFFER_STRUCT {
   char *content;
   char *file_path;
-  cursor_t cursor;
+  int cursor;
+  int line;
 } buffer_t;
 
 buffer_t *init_buffer();
+void dump_buffer(buffer_t *buffer);
 
 void free_buffer(buffer_t *buffer);
 

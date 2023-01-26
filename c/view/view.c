@@ -18,9 +18,9 @@ view_t *init_view() {
   view->newt.c_lflag &= ~(ICANON | ECHO);
   tcsetattr(STDIN_FILENO, TCSANOW, &view->newt);
 
-  struct winsize view_size = get_view_size();
-  view->view_height = view_size.ws_col;
-  view->view_width = view_size.ws_row;
+  view_cords_t view_size = get_view_size();
+  view->view_height = view_size.y;
+  view->view_width = view_size.x;
 
   view->footer = (void *)0;
   view->info = (void *)0;
@@ -34,10 +34,11 @@ int update_view(view_t *view, buffer_t *buffer) {
 
   draw_footer();
 
-  print_content(view, buffer);
+  // print_content(view, buffer);
 
-  set_cursor(buffer->cursor.x, buffer->cursor.y);
+  set_cursor(buffer->cursor, buffer->line);
 
+  dump_buffer(buffer);
   return 1;
 }
 
@@ -48,12 +49,12 @@ void window_resize_handler(int sig, view_t *view, buffer_t *buffer) {
 void draw_footer() {
   // kim_log("drawing footer");
 
-  struct winsize view_size = get_view_size();
+  view_cords_t view_size = get_view_size();
 
-  printf("\033[%d;0H", view_size.ws_row - 1);
+  printf("\033[%d;0H", view_size.y - 1);
   set_color(RED);
   set_background_color(WHITE);
-  for (int i = 0; i < view_size.ws_col; i++) {
+  for (int i = 0; i < view_size.x; i++) {
     putchar(' ');
   }
 
@@ -68,7 +69,7 @@ void print_content(view_t *view, buffer_t *buffer) {
   printf("%s", buffer->content);
 }
 
-void set_cursor(int row, int column) { printf("\033[%d;%dH", row, column); }
+void set_cursor(int x, int y) { printf("\033[%d;%dH", y, x); }
 
 void set_cursor_shape(cursor_shape_t shape) {
   switch (shape) {
@@ -106,13 +107,15 @@ void set_cursor_style(cursor_style_t style) {
   }
 }
 
-struct winsize get_view_size() {
+view_cords_t get_view_size() {
   struct winsize view_size;
   ioctl(0, TIOCGWINSZ, &view_size);
 
   // kim_log("rows: %s, columns: %s", view_size.ws_row, view_size.ws_col);
 
-  return view_size;
+  view_cords_t cords = {view_size.ws_col, view_size.ws_row};
+
+  return cords;
 }
 
 void draw_line_numbers() {}

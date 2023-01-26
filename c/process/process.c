@@ -20,8 +20,12 @@ void process_input(process_t *process, view_t *view, buffer_t *buffer) {
   while (1) {
     key_pressed = poll(&fds, 1, 0);
 
+    if (key_pressed) {
+      update_view(view, buffer);
+    }
+
     // FIXME: fix continuos rendering to fix flicker
-    //  update_view(view, buffer);
+    // update_view(view, buffer);
 
     if (key_pressed) {
       char ch = getchar();
@@ -47,16 +51,16 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
     getchar(); // skip the [
     switch (getchar()) {
     case 'A':
-      buffer->cursor.y--; // up arrow
+      move_up(buffer); // up arrow
       return 0;
     case 'B':
-      buffer->cursor.y++; // down arrow
+      move_down(buffer); // down arrow
       return 0;
     case 'C':
-      buffer->cursor.x++; // right arrow
+      move_right(buffer); // right arrow
       return 0;
     case 'D':
-      buffer->cursor.x--; // arrow key
+      move_left(buffer); // left arrow
       return 0;
     }
   }
@@ -81,21 +85,37 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
   return 0;
 }
 
+void move_right(buffer_t *buffer) { buffer->cursor++; }
+
+void move_left(buffer_t *buffer) {
+  if (buffer->cursor > 1) {
+    buffer->cursor--;
+  }
+}
+
+void move_up(buffer_t *buffer) {
+  if (buffer->line > 1) {
+    buffer->line--;
+  }
+}
+
+void move_down(buffer_t *buffer) { buffer->line++; }
+
 int process_insert(process_t *process, char ch, buffer_t *buffer) {
   if (ch == '\033') {
     getchar(); // skip the [
     switch (getchar()) {
     case 'A':
-      buffer->cursor.y--; // up arrow
+      move_up(buffer); // up arrow
       return 0;
     case 'B':
-      buffer->cursor.y++; // down arrow
+      move_down(buffer); // down arrow
       return 0;
     case 'C':
-      buffer->cursor.x++; // right arrow
+      move_right(buffer); // right arrow
       return 0;
     case 'D':
-      buffer->cursor.x--; // arrow key
+      move_left(buffer); // left arrow
       return 0;
     }
   }
@@ -107,7 +127,7 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
     return 1;
   }
 
-  buffer->content[buffer->cursor.x] = ch;
+  write_char_to_buffer(buffer, ch, buffer->cursor);
 
   return 0;
 }

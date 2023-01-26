@@ -8,14 +8,23 @@ buffer_t *init_buffer() {
   buffer_t *buffer = calloc(1, sizeof(struct BUFFER_STRUCT));
   buffer->content = (void *)0;
   buffer->file_path = (void *)0;
-  buffer->cursor.x = 0;
-  buffer->cursor.y = 0;
+  buffer->cursor = 0;
+  buffer->line = 0;
   return buffer;
 }
 
 void free_buffer(buffer_t *buffer) { free(buffer); }
 
 void write_char_to_buffer(buffer_t *buffer, char ch, int cursor) {
+  int len = strlen(buffer->content);
+
+  if (cursor > len) {
+    // reallocate memory for the string
+    buffer->content = (char *)realloc(buffer->content, cursor + 1);
+    // set the new memory to 0
+    memset(buffer->content + len, 0, cursor - len + 1);
+  }
+  // add the character to the string
   buffer->content[cursor] = ch;
 }
 
@@ -39,4 +48,11 @@ void read_file_to_buffer(buffer_t *buffer, char *file_path) {
   buffer->file_path = file_path;
 
   kim_log("reading file to buffer");
+}
+
+void dump_buffer(buffer_t *buffer) {
+  kim_log("content: %s", buffer->content);
+
+  kim_log("cursor: %d", buffer->cursor);
+  kim_log("line: %d", buffer->line);
 }

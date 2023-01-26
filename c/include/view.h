@@ -4,6 +4,11 @@
 #include "buffer.h"
 #include <termios.h>
 
+typedef struct CURSOR_STRUCT {
+  int x;
+  int y;
+} view_cords_t;
+
 typedef struct VIEW_STRUCT {
   struct termios oldt;
   struct termios newt;
@@ -32,13 +37,9 @@ typedef enum {
   SHAPE_BAR
 } cursor_shape_t;
 
-typedef enum {
-  STYLE_BLINKING,
-  STYLE_STEADY,
-  STYLE_INVISIBLE
-} cursor_style_t;
+typedef enum { STYLE_BLINKING, STYLE_STEADY, STYLE_INVISIBLE } cursor_style_t;
 
-struct winsize get_view_size();
+view_cords_t get_view_size();
 
 void window_resize_handler(int sig, view_t *view, buffer_t *buffer);
 
