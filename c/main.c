@@ -3,6 +3,7 @@
 #include "include/utils.h"
 #include "include/view.h"
 
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +11,8 @@
 #include <unistd.h>
 
 int main() {
+  signal(SIGWINCH, window_resize_handler);
+
   clear_logs();
 
   kim_log("starting "
@@ -21,9 +24,10 @@ int main() {
   buffer_t *buffer = init_buffer();
   read_file_to_buffer(buffer, file_path);
 
-  // for(;;) {}
-
   view_t *view = init_view();
+
+  // for (;;) {
+  // }
 
   process_t *process = init_process();
 

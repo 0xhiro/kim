@@ -18,8 +18,13 @@ view_t *init_view() {
   view->newt.c_lflag &= ~(ICANON | ECHO);
   tcsetattr(STDIN_FILENO, TCSANOW, &view->newt);
 
+  struct winsize view_size = get_view_size();
+  view->view_height = view_size.ws_col;
+  view->view_width = view_size.ws_row;
+
   view->footer = (void *)0;
   view->info = (void *)0;
+
   return view;
 }
 
@@ -31,6 +36,8 @@ int update_view() {
 
   return 1;
 }
+
+void window_resize_handler(int sig) { update_view(); }
 
 void draw_footer() {
   kim_log("drawing footer");

@@ -8,6 +8,8 @@ typedef struct VIEW_STRUCT {
   struct termios newt;
   char *footer;
   char *info;
+  int view_height;
+  int view_width;
 } view_t;
 
 typedef enum {
@@ -23,6 +25,8 @@ typedef enum {
 } color_t;
 
 struct winsize get_view_size();
+
+void window_resize_handler(int sig);
 
 void set_color(color_t color);
 

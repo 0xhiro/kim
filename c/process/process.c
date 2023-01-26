@@ -10,29 +10,18 @@
 void process_input(process_t *process, view_t *view, buffer_t *buffer) {
   int updated_view = 0;
   int key_pressed = 0;
-  int window_resized = 0;
-
-  int former_rows = 0;
-  int former_cols = 0;
 
   struct pollfd fds;
 
   fds.fd = 0;
   fds.events = POLLIN;
 
+  update_view();
   while (1) {
     key_pressed = poll(&fds, 1, 0);
 
-    struct winsize view_size = get_view_size();
-    if (former_rows != view_size.ws_row || former_cols != view_size.ws_col) {
-      window_resized = 1;
-      former_cols = view_size.ws_col;
-      former_rows = view_size.ws_row;
-    }
-
-    if (key_pressed || window_resized) {
+    if (key_pressed) {
       update_view();
-      window_resized = 0;
     }
 
     if (key_pressed == 1) {
