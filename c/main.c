@@ -14,7 +14,6 @@
 // pressed
 // FIXME: the screen resizes is very very buggy. only using fixed size for now
 int main() {
-  // signal(SIGWINCH, window_resize_handler);
 
   clear_logs();
 
@@ -36,16 +35,15 @@ int main() {
 
   process_input(process, view, buffer);
 
-  free_process(process);
   exit_view(view);
-  free_buffer(buffer);
 
   kim_log("stopping "
           "execution..........................................................."
           ".....");
+
   // dump_logs();
   dump_file(file_path);
-  kim_log("\033c");
+  // kim_log("\033c");
 
   return 0;
 }

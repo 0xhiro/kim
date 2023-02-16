@@ -9,6 +9,7 @@ typedef struct BUFFER_STRUCT {
 } buffer_t;
 
 buffer_t *init_buffer();
+
 void dump_buffer(buffer_t *buffer);
 
 void free_buffer(buffer_t *buffer);
