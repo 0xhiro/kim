@@ -1,1 +1,3 @@
-gcc -g -O0 ./main.c -o kim
+fn main(){
+  run("echo building kim");
+}

@@ -1,1 +1,7 @@
-gcc -g -O0 ./main.c -o kim
+fn main(){
+  run("echo running kim");
+
+  run("chad all");
+
+  run("../target/kim");
+}
