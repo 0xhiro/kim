@@ -45,7 +45,7 @@ extern void kimview();
 
 view_cords_t get_view_size();
 
-void window_resize_handler(int sig, view_t *view, buffer_t *buffer);
+int window_resized(int former_row, int former_col);
 
 void print_content(view_t *view, buffer_t *buffer);
 
@@ -65,7 +65,9 @@ void flush_view();
 
 view_t *init_view();
 
-void draw_footer();
+void draw_footer(view_t *view, buffer_t *buffer);
+
+void draw_info(view_t *view, buffer_t *buffer);
 
 void draw_line_numbers();
 
@@ -76,5 +78,7 @@ void set_cursor_shape(cursor_shape_t shape);
 void set_cursor_style(cursor_style_t style);
 
 void set_cursor(int row, int column);
+
+void put_str(int row, int col, char *str);
 
 #endif

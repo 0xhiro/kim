@@ -17,44 +17,21 @@ struct ThreadArgs {
   double frame_rate;
 };
 
-void *view_process(void *arg) {
-  struct ThreadArgs *args = (struct ThreadArgs *)arg;
-  double seconds = args->frame_rate;
-
-  time_t next_time = time(NULL);
-
-  while (1) {
-    time_t now = time(NULL);
-    if (now >= next_time) {
-      render_view(args->view, args->buffer);
-      next_time = now + seconds;
-    }
-    int sleepTime = (int)(seconds * 1000000);
-    usleep(sleepTime);
-  }
-  return NULL;
-}
-
 void main_process(process_t *process, view_t *view, buffer_t *buffer) {
-  pthread_t thread_id;
-  int ret;
-
-  struct ThreadArgs args = {
-      .view = view, .buffer = buffer, .frame_rate = 0.07}; // 30fps
-
-  // Create a new thread to run the function
-  ret = pthread_create(&thread_id, NULL, view_process, (void *)&args);
-  if (ret) {
-    kim_log("Error creating thread\n");
-    exit(1);
-  }
-
   int key_pressed = 0;
+  int former_row = 0;
+  int former_col = 0;
 
   struct pollfd fds;
 
   fds.fd = 0;
   fds.events = POLLIN;
+
+  view_cords_t size = get_view_size();
+  former_row = size.x;
+  former_col = size.y;
+
+  render_view(view, buffer);
 
   for (;;) {
     key_pressed = poll(&fds, 1, 0);
@@ -71,6 +48,16 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
       } else if (process->mode == INSERT) {
         process_insert(process, ch, buffer);
       }
+
+      render_view(view, buffer);
+    }
+
+    if (window_resized(former_row, former_col)) {
+      render_view(view, buffer);
+
+      view_cords_t size = get_view_size();
+      former_row = size.x;
+      former_col = size.y;
     }
   }
 }

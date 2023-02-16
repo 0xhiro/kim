@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <unistd.h>
@@ -32,33 +33,70 @@ int render_view(view_t *view, buffer_t *buffer) {
   kim_log("rendering view");
   clear_view();
 
-  draw_footer();
+  draw_info(view, buffer);
+
+  draw_footer(view, buffer);
 
   print_content(view, buffer);
 
   set_cursor(buffer->cursor, buffer->line);
 
-  // dump_buffer(buffer);
-
   flush_view();
-  
+
   return 1;
 }
 
-void draw_footer() {
-  // kim_log("drawing footer");
+int window_resized(int former_row, int former_col) {
+  view_cords_t size = get_view_size();
 
-  view_cords_t view_size = get_view_size();
-
-  printf("\033[%d;0H", view_size.y - 1);
-  set_color(RED);
-  set_background_color(WHITE);
-  for (int i = 0; i < view_size.x; i++) {
-    putchar(' ');
+  if (former_row != size.x || former_col != size.y) {
+    return 1;
   }
 
-  // set_cursor_shape(SHAPE_UNDERLINE);
-  // set_cursor_style(STYLE_BLINKING);
+  return 0;
+}
+
+void draw_info(view_t *view, buffer_t *buffer) {
+  view_cords_t view_size = get_view_size();
+
+  set_color(WHITE);
+
+  put_str(0, view_size.y, "some random info");
+
+  reset_color();
+  reset_background_color();
+}
+
+void put_char(int row, int col, char ch) {
+  set_cursor(row, col);
+  putchar(ch);
+}
+
+void put_str(int row, int col, char *str) {
+  set_cursor(row, col);
+  printf("%s", str);
+}
+
+void draw_footer(view_t *view, buffer_t *buffer) {
+  view_cords_t view_size = get_view_size();
+
+  set_color(BLACK);
+  set_background_color(GREEN);
+
+  for (int i = 0; i < view_size.x + 1; i++) {
+    if (i == 2) {
+      put_str(i, view_size.y - 1, "NOR  ");
+      i += 5;
+
+      put_str(i, view_size.y - 1, buffer->file_path);
+
+      i += strlen(buffer->file_path) - 1;
+
+    } else {
+      put_char(i, view_size.y - 1, ' ');
+    }
+  }
+
   reset_color();
   reset_background_color();
 }
@@ -109,8 +147,6 @@ void set_cursor_style(cursor_style_t style) {
 view_cords_t get_view_size() {
   struct winsize view_size;
   ioctl(0, TIOCGWINSZ, &view_size);
-
-  // kim_log("rows: %s, columns: %s", view_size.ws_row, view_size.ws_col);
 
   view_cords_t cords = {view_size.ws_col, view_size.ws_row};
 
@@ -209,9 +245,7 @@ void clear_view() {
   flush_view();
 }
 
-void flush_view(){
-  fflush(stdout);
-}
+void flush_view() { fflush(stdout); }
 
 void exit_view(view_t *view) {
   tcsetattr(STDIN_FILENO, TCSANOW, &view->oldt);
