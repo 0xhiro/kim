@@ -1,3 +1,11 @@
+let out = "./target/kim"
+
 fn main(){
   run("echo building kim");
+
+  run("cd rust/view && cargo build --quiet --release");
+
+  run("gcc -w -Os -o $@ $(sources) -L./rust/view/target/release -lkimview");
+
+  run("strip $@");
 }

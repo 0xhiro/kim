@@ -1,11 +1,11 @@
-use std::io::{stdout, Write};
+use std::io::stdout;
 
 use crossterm::{
-    event, execute,
     style::{Color, Print, ResetColor, SetBackgroundColor, SetForegroundColor},
-    ExecutableCommand, Result,
+    ExecutableCommand,
 };
 
+#[allow(dead_code)]
 fn kimview() {
     // or using functions
     stdout()
