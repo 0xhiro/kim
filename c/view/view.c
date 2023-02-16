@@ -28,8 +28,8 @@ view_t *init_view() {
   return view;
 }
 
-int update_view(view_t *view, buffer_t *buffer) {
-  // kim_log("updating view");
+int render_view(view_t *view, buffer_t *buffer) {
+  kim_log("rendering view");
   clear_view();
 
   draw_footer();
@@ -38,12 +38,11 @@ int update_view(view_t *view, buffer_t *buffer) {
 
   set_cursor(buffer->cursor, buffer->line);
 
-  dump_buffer(buffer);
-  return 1;
-}
+  // dump_buffer(buffer);
 
-void window_resize_handler(int sig, view_t *view, buffer_t *buffer) {
-  update_view(view, buffer);
+  flush_view();
+  
+  return 1;
 }
 
 void draw_footer() {
@@ -206,6 +205,12 @@ void set_background_color(color_t color) {
 
 void clear_view() {
   printf("\033c"); // clear the terminal
+
+  flush_view();
+}
+
+void flush_view(){
+  fflush(stdout);
 }
 
 void exit_view(view_t *view) {

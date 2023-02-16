@@ -25,7 +25,11 @@ clean: make_dir
 	rm target/*
 
 ./target/kim: make_dir ./c/include/*.h $(sources)
-	gcc -g -o $@ $(sources)
+	# cd rust/view && cargo build --quiet --release
+	gcc -w -Os -o $@ $(sources) -L./rust/view/target/release -lkimview
+	strip $@
+
+
  
 run: make_dir ./target/kim 
 	make all
@@ -36,4 +40,4 @@ logs:
 
 tail:
 	clear
-	tail -F $(test_file)
+	tail -F ./target/kim-logs.txt

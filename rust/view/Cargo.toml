@@ -1,8 +1,16 @@
 [package]
-name = "view"
+name = "kimview"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "kimview"
+crate-type = ["staticlib"]
+
+[profile.release]
+opt-level = 3
+lto = true
 
 [dependencies]
+libc = "0.2"
+crossterm = "0.26.0"

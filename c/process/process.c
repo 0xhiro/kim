@@ -3,12 +3,52 @@
 #include "../include/utils.h"
 #include "../include/view.h"
 #include <poll.h>
+#include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
+#include <time.h>
+#include <unistd.h>
 
-void process_input(process_t *process, view_t *view, buffer_t *buffer) {
+struct ThreadArgs {
+  view_t *view;
+  buffer_t *buffer;
+  double frame_rate;
+};
+
+void *view_process(void *arg) {
+  struct ThreadArgs *args = (struct ThreadArgs *)arg;
+  double seconds = args->frame_rate;
+
+  time_t next_time = time(NULL);
+
+  while (1) {
+    time_t now = time(NULL);
+    if (now >= next_time) {
+      render_view(args->view, args->buffer);
+      next_time = now + seconds;
+    }
+    int sleepTime = (int)(seconds * 1000000);
+    usleep(sleepTime);
+  }
+  return NULL;
+}
+
+void main_process(process_t *process, view_t *view, buffer_t *buffer) {
+  pthread_t thread_id;
+  int ret;
+
+  struct ThreadArgs args = {
+      .view = view, .buffer = buffer, .frame_rate = 0.07}; // 30fps
+
+  // Create a new thread to run the function
+  ret = pthread_create(&thread_id, NULL, view_process, (void *)&args);
+  if (ret) {
+    kim_log("Error creating thread\n");
+    exit(1);
+  }
+
   int key_pressed = 0;
 
   struct pollfd fds;
@@ -16,12 +56,7 @@ void process_input(process_t *process, view_t *view, buffer_t *buffer) {
   fds.fd = 0;
   fds.events = POLLIN;
 
-  update_view(view, buffer); // initial view render
-  while (1) {
-    if (key_pressed) {
-      update_view(view, buffer);
-    }
-
+  for (;;) {
     key_pressed = poll(&fds, 1, 0);
 
     if (key_pressed) {
@@ -36,10 +71,6 @@ void process_input(process_t *process, view_t *view, buffer_t *buffer) {
       } else if (process->mode == INSERT) {
         process_insert(process, ch, buffer);
       }
-    }
-
-    if (key_pressed) {
-      update_view(view, buffer);
     }
   }
 }

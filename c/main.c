@@ -10,9 +10,6 @@
 #include <termios.h>
 #include <unistd.h>
 
-// FIXME: it seems the screen does not actually get cleared until a key is
-// pressed
-// FIXME: the screen resizes is very very buggy. only using fixed size for now
 int main() {
 
   clear_logs();
@@ -28,12 +25,14 @@ int main() {
 
   view_t *view = init_view();
 
+  // kimview();
+
   // for (;;) {
   // }
 
   process_t *process = init_process();
 
-  process_input(process, view, buffer);
+  main_process(process, view, buffer);
 
   exit_view(view);
 

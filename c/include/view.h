@@ -39,6 +39,10 @@ typedef enum {
 
 typedef enum { STYLE_BLINKING, STYLE_STEADY, STYLE_INVISIBLE } cursor_style_t;
 
+
+
+extern void kimview();
+
 view_cords_t get_view_size();
 
 void window_resize_handler(int sig, view_t *view, buffer_t *buffer);
@@ -57,13 +61,15 @@ void exit_view(view_t *view);
 
 void clear_view();
 
+void flush_view();
+
 view_t *init_view();
 
 void draw_footer();
 
 void draw_line_numbers();
 
-int update_view(view_t *view, buffer_t *buffer);
+int render_view(view_t *view, buffer_t *buffer);
 
 void set_cursor_shape(cursor_shape_t shape);
 
