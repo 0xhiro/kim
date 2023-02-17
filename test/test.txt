@@ -8,6 +8,6 @@ void draw_footer(view_t *view, buffer_t *buffer) {
   reset_background_color();
 }
 
-void draw_conwwwwdddew_t *view, buffer_t *buffer) {
+void draw_content(view_t *view, buffer_t *buffer) {
   put_str(0, 0, buffer->content);
 }

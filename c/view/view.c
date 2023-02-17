@@ -58,7 +58,7 @@ int window_resized(cords_t former_size) {
   return 0;
 }
 
-void draw_info(view_t *view, process_t* process) {
+void draw_info(view_t *view, process_t *process) {
   cords_t view_size = get_view_size();
 
   set_color(WHITE);
@@ -72,24 +72,43 @@ void draw_footer(view_t *view, buffer_t *buffer, process_t *process) {
   set_color(BLACK);
   set_background_color(GREEN);
 
-  for (int i = 0; i < view_size.col + 1; i++) {
-    if (i == 2) {
-      if (process->mode == NORMAL) {
-        put_str(view_size.row - 1, i, "NOR  ");
-        i += 5;
-      } else if (process->mode == INSERT) {
-        put_str(view_size.row - 1, i, "INS  ");
-        i += 5;
-      }
-
-      put_str(view_size.row - 1, i, buffer->file_path);
-
-      i += strlen(buffer->file_path) - 1;
-
-    } else {
-      put_char(view_size.row - 1, i, ' ');
-    }
+  for (int i = 1; i < view_size.col + 1; i++) {
+    put_char(view_size.row - 1, i, ' ');
   }
+
+  int i = 2;
+
+  if (process->mode == NORMAL) {
+    put_str(view_size.row - 1, i, "NOR");
+  } else if (process->mode == INSERT) {
+    put_str(view_size.row - 1, i, "INS");
+  }
+
+  i += 5;
+
+  put_str(view_size.row - 1, i, buffer->file_path);
+
+  i += strlen(buffer->file_path);
+
+  i += 2;
+
+  char line_str[10];
+  sprintf(line_str, "%d", buffer->line);
+
+  put_str(view_size.row - 1, i, line_str);
+
+  i += strlen(line_str);
+
+  put_char(view_size.row - 1, i, ':');
+
+  i += 1;
+
+  char col_str[10];
+  sprintf(col_str, "%d", buffer->col);
+
+  put_str(view_size.row - 1, i, col_str);
+
+  i += strlen(col_str);
 
   reset_background_color();
 }

@@ -29,6 +29,8 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
 
   cords_t former_size = get_view_size();
 
+  update_info(process, "welkome to kim :)");
+
   render_view(view, buffer, process);
 
   for (;;) {
