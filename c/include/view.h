@@ -5,8 +5,8 @@
 #include <termios.h>
 
 typedef struct CURSOR_STRUCT {
-  int x;
-  int y;
+  int col;
+  int row;
 } view_cords_t;
 
 typedef struct VIEW_STRUCT {
@@ -47,7 +47,7 @@ view_cords_t get_view_size();
 
 int window_resized(int former_row, int former_col);
 
-void print_content(view_t *view, buffer_t *buffer);
+void draw_content(view_t *view, buffer_t *buffer);
 
 void set_color(color_t color);
 

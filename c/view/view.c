@@ -20,8 +20,8 @@ view_t *init_view() {
   tcsetattr(STDIN_FILENO, TCSANOW, &view->newt);
 
   view_cords_t view_size = get_view_size();
-  view->view_height = view_size.y;
-  view->view_width = view_size.x;
+  view->view_height = view_size.row;
+  view->view_width = view_size.col;
 
   view->footer = (void *)0;
   view->info = (void *)0;
@@ -37,7 +37,7 @@ int render_view(view_t *view, buffer_t *buffer) {
 
   draw_footer(view, buffer);
 
-  print_content(view, buffer);
+  draw_content(view, buffer);
 
   set_cursor(buffer->cursor, buffer->line);
 
@@ -49,7 +49,7 @@ int render_view(view_t *view, buffer_t *buffer) {
 int window_resized(int former_row, int former_col) {
   view_cords_t size = get_view_size();
 
-  if (former_row != size.x || former_col != size.y) {
+  if (former_row != size.row || former_col != size.col) {
     return 1;
   }
 
@@ -61,7 +61,7 @@ void draw_info(view_t *view, buffer_t *buffer) {
 
   set_color(WHITE);
 
-  put_str(0, view_size.y, "some random info");
+  put_str(0, view_size.row, "some random info");
 
   reset_color();
   reset_background_color();
@@ -83,17 +83,17 @@ void draw_footer(view_t *view, buffer_t *buffer) {
   set_color(BLACK);
   set_background_color(GREEN);
 
-  for (int i = 0; i < view_size.x + 1; i++) {
+  for (int i = 0; i < view_size.col + 1; i++) {
     if (i == 2) {
-      put_str(i, view_size.y - 1, "NOR  ");
+      put_str(i, view_size.row - 1, "NOR  ");
       i += 5;
 
-      put_str(i, view_size.y - 1, buffer->file_path);
+      put_str(i, view_size.row - 1, buffer->file_path);
 
       i += strlen(buffer->file_path) - 1;
 
     } else {
-      put_char(i, view_size.y - 1, ' ');
+      put_char(i, view_size.row - 1, ' ');
     }
   }
 
@@ -101,9 +101,8 @@ void draw_footer(view_t *view, buffer_t *buffer) {
   reset_background_color();
 }
 
-void print_content(view_t *view, buffer_t *buffer) {
-  set_cursor(0, 0);
-  printf("%s", buffer->content);
+void draw_content(view_t *view, buffer_t *buffer) {
+  put_str(0, 0, buffer->content);
 }
 
 void set_cursor(int x, int y) { printf("\033[%d;%dH", y, x); }
