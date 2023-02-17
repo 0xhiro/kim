@@ -5,6 +5,7 @@
 
 #include <unistd.h>
 
+#include "../include/process.h"
 #include "../include/utils.h"
 
 view_t *init_view() {
@@ -28,17 +29,19 @@ view_t *init_view() {
   return view;
 }
 
-int render_view(view_t *view, buffer_t *buffer) {
+int render_view(view_t *view, buffer_t *buffer, process_t *process) {
   kim_log("rendering view");
   clear_view();
 
-  draw_info(view, buffer);
+  draw_info(view, process);
 
-  draw_footer(view, buffer);
+  draw_footer(view, buffer, process);
 
   draw_content(view, buffer);
 
   set_cursor(buffer->line, buffer->col);
+
+  update_info(process, "");
 
   flush_view();
 
@@ -55,18 +58,15 @@ int window_resized(cords_t former_size) {
   return 0;
 }
 
-void draw_info(view_t *view, buffer_t *buffer) {
+void draw_info(view_t *view, process_t* process) {
   cords_t view_size = get_view_size();
 
   set_color(WHITE);
 
-  put_str(view_size.row, 0, "some random info");
-
-  reset_color();
-  reset_background_color();
+  put_str(view_size.row, 0, process->info);
 }
 
-void draw_footer(view_t *view, buffer_t *buffer) {
+void draw_footer(view_t *view, buffer_t *buffer, process_t *process) {
   cords_t view_size = get_view_size();
 
   set_color(BLACK);
@@ -74,8 +74,13 @@ void draw_footer(view_t *view, buffer_t *buffer) {
 
   for (int i = 0; i < view_size.col + 1; i++) {
     if (i == 2) {
-      put_str(view_size.row - 1, i, "NOR  ");
-      i += 5;
+      if (process->mode == NORMAL) {
+        put_str(view_size.row - 1, i, "NOR  ");
+        i += 5;
+      } else if (process->mode == INSERT) {
+        put_str(view_size.row - 1, i, "INS  ");
+        i += 5;
+      }
 
       put_str(view_size.row - 1, i, buffer->file_path);
 
@@ -86,7 +91,6 @@ void draw_footer(view_t *view, buffer_t *buffer) {
     }
   }
 
-  reset_color();
   reset_background_color();
 }
 

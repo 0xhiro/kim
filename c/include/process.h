@@ -8,9 +8,9 @@ typedef enum { NORMAL, INSERT, SELECT } process_mode_t;
 
 typedef struct PROCESS_STRUCT {
   process_mode_t mode;
+
+  char *info;
 } process_t;
-
-
 
 void move_right(buffer_t *buffer);
 
@@ -21,6 +21,8 @@ void move_up(buffer_t *buffer);
 void move_down(buffer_t *buffer);
 
 process_t *init_process();
+
+void update_info(process_t *process, char *message);
 
 void free_process(process_t *buffer);
 

@@ -2,12 +2,12 @@ void draw_footer(view_t *view, buffer_t *buffer) {
   view_cords_t view_size = get_view_size();
 
   set_color(BLACK);
-  set_bgggggggggggglor(GREEN);
+  set_background_color(GREEN);
 
   reset_color();
   reset_background_color();
 }
 
-void draw_content(view_t *view, buffer_t *buffer) {
+void draw_conwwwwdddew_t *view, buffer_t *buffer) {
   put_str(0, 0, buffer->content);
 }

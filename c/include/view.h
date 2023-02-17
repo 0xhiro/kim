@@ -10,7 +10,7 @@ typedef struct CURSOR_STRUCT {
 } cords_t;
 
 typedef struct LINE_COLLECTION {
-  char** lines;
+  char **lines;
   int lines_count;
 } line_collection_t;
 
@@ -44,6 +44,7 @@ typedef enum {
 
 typedef enum { STYLE_BLINKING, STYLE_STEADY, STYLE_INVISIBLE } cursor_style_t;
 
+typedef struct PROCESS_STRUCT process_t;
 
 
 extern void kimview();
@@ -72,13 +73,15 @@ void flush_view();
 
 view_t *init_view();
 
-void draw_footer(view_t *view, buffer_t *buffer);
 
-void draw_info(view_t *view, buffer_t *buffer);
+void draw_footer(view_t *view, buffer_t *buffer, process_t* process);
+
+void draw_info(view_t *view, process_t* process);
 
 void draw_line_number(int i);
 
-int render_view(view_t *view, buffer_t *buffer);
+
+int render_view(view_t *view, buffer_t *buffer, process_t *process);
 
 void set_cursor_shape(cursor_shape_t shape);
 

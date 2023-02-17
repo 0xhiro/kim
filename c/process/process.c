@@ -29,7 +29,7 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
 
   cords_t former_size = get_view_size();
 
-  render_view(view, buffer);
+  render_view(view, buffer, process);
 
   for (;;) {
     key_pressed = poll(&fds, 1, 0);
@@ -47,15 +47,20 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
         process_insert(process, ch, buffer);
       }
 
-      render_view(view, buffer);
+      render_view(view, buffer, process);
     }
 
     if (window_resized(former_size)) {
-      render_view(view, buffer);
+      render_view(view, buffer, process);
 
       former_size = get_view_size();
     }
   }
+}
+
+void update_info(process_t *process, char *message) {
+  process->info = realloc(process->info, strlen(message) + 1 * sizeof(char));
+  strcpy(process->info, message);
 }
 
 int process_normal(process_t *process, char ch, buffer_t *buffer) {
@@ -83,10 +88,12 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
     return 1;
   case 'w':
     kim_log("saving buffer");
+    update_info(process, "saving buffer");
     write_buffer_to_file(buffer);
     break;
   case 'i':
     kim_log("changing to insert mode");
+    update_info(process, "changing to insert mode");
     process->mode = INSERT;
     break;
   default:
@@ -96,26 +103,6 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
 
   return 0;
 }
-
-void move_right(buffer_t *buffer) {
-  // if (strlen(buffer->all_lines[buffer->line]) + 1 > buffer->col + 1) {
-  buffer->col++;
-  // }
-}
-
-void move_left(buffer_t *buffer) {
-  // if (buffer->col > 1) {
-  buffer->col--;
-  // }
-}
-
-void move_up(buffer_t *buffer) {
-  // if (buffer->line > 1) {
-  buffer->line--;
-  // }
-}
-
-void move_down(buffer_t *buffer) { buffer->line++; }
 
 int process_insert(process_t *process, char ch, buffer_t *buffer) {
   if (ch == '\033') {
@@ -140,11 +127,13 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   // BUG: escape is not registered until three presses
   case ESCAPE_CHAR:
     kim_log("changing to normal mode");
+    update_info(process, "now in normal mode");
     process->mode = NORMAL;
     return 1;
 
   case '1':
     kim_log("changing to normal mode");
+    update_info(process, "now in normal mode");
     process->mode = NORMAL;
     return 1;
   }
@@ -154,9 +143,31 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   return 0;
 }
 
+void move_right(buffer_t *buffer) {
+  // if (strlen(buffer->all_lines[buffer->line]) + 1 > buffer->col + 1) {
+  buffer->col++;
+  // }
+}
+
+void move_left(buffer_t *buffer) {
+  // if (buffer->col > 1) {
+  buffer->col--;
+  // }
+}
+
+void move_up(buffer_t *buffer) {
+  // if (buffer->line > 1) {
+  buffer->line--;
+  // }
+}
+
+void move_down(buffer_t *buffer) { buffer->line++; }
+
 process_t *init_process() {
   process_t *process = calloc(1, sizeof(struct PROCESS_STRUCT));
   process->mode = NORMAL;
+  process->info = (char *)malloc(2 * sizeof(char));
+  strcpy(process->info, "H");
 
   return process;
 }
