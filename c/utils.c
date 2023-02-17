@@ -1,11 +1,12 @@
+#include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdarg.h>
 
 #include "include/utils.h"
+#include "include/view.h"
 
-void write_file(char *filename, char *contents) {
+void write_file(char *filename, char *content) {
   FILE *file = fopen(filename, "w"); // open file for writing
 
   if (file == NULL) {
@@ -13,8 +14,22 @@ void write_file(char *filename, char *contents) {
     return;
   }
 
-  fprintf(file, "%s", contents); // write contents to file
-  fclose(file);                  // close the file
+  fprintf(file, "%s", content); // write contents to file
+  fclose(file);                 // close the file
+}
+
+void write_lines_to_file(char *filename, char **content, int lines_count) {
+  FILE *file = fopen(filename, "w");
+  if (file == NULL) {
+    kim_log("Error opening file\n");
+    exit(1);
+  }
+
+   for (int i = 0; i < lines_count; i++) {
+    fprintf(file, "%s", content[i]);
+  }
+
+  fclose(file);
 }
 
 void kim_log(const char *format, ...) {
@@ -71,6 +86,35 @@ char *read_file_to_string(const char *filename) {
 
   fclose(file);
   return file_contents;
+}
+
+line_collection_t read_file_to_lines(char *filename) {
+  // Open the file for reading
+  FILE *fp = fopen(filename, "r");
+  if (fp == NULL) {
+    printf("Error opening file!\n");
+    exit(1);
+  }
+
+  // Read each line of the file into the array
+  char **lines = NULL;
+  char *line = NULL;
+  size_t len = 0;
+  ssize_t read;
+  int num_lines = 0;
+  while ((read = getline(&line, &len, fp)) != -1) {
+    num_lines++;
+    lines = (char **)realloc(lines, num_lines * sizeof(char *));
+    lines[num_lines - 1] = line;
+    line = NULL;
+  }
+
+  // Close the file
+  fclose(fp);
+
+  line_collection_t collection = {.lines = lines, .lines_count = num_lines};
+
+  return collection;
 }
 
 int file_has_extension(const char *file_name, const char *extension) {

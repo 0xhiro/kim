@@ -25,8 +25,6 @@ int main() {
 
   view_t *view = init_view();
 
-  // kimview();
-
   // for (;;) {
   // }
 

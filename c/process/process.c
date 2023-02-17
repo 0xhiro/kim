@@ -27,7 +27,7 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
   fds.fd = 0;
   fds.events = POLLIN;
 
-  view_cords_t size = get_view_size();
+  cords_t size = get_view_size();
   former_row = size.row;
   former_col = size.col;
 
@@ -55,7 +55,7 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
     if (window_resized(former_row, former_col)) {
       render_view(view, buffer);
 
-      view_cords_t size = get_view_size();
+      cords_t size = get_view_size();
       former_row = size.row;
       former_col = size.col;
     }
@@ -102,21 +102,21 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
 }
 
 void move_right(buffer_t *buffer) {
-  if (strlen(buffer->content) + 1 > buffer->cursor + 1) {
-    buffer->cursor++;
-  }
+  // if (strlen(buffer->all_lines[buffer->line]) + 1 > buffer->col + 1) {
+  buffer->col++;
+  // }
 }
 
 void move_left(buffer_t *buffer) {
-  if (buffer->cursor > 1) {
-    buffer->cursor--;
-  }
+  // if (buffer->col > 1) {
+  buffer->col--;
+  // }
 }
 
 void move_up(buffer_t *buffer) {
-  if (buffer->line > 1) {
-    buffer->line--;
-  }
+  // if (buffer->line > 1) {
+  buffer->line--;
+  // }
 }
 
 void move_down(buffer_t *buffer) { buffer->line++; }
@@ -141,13 +141,19 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   }
 
   switch (ch) {
+  // BUG: escape is not registered until three presses
   case ESCAPE_CHAR:
+    kim_log("changing to normal mode");
+    process->mode = NORMAL;
+    return 1;
+
+  case '1':
     kim_log("changing to normal mode");
     process->mode = NORMAL;
     return 1;
   }
 
-  write_char_to_buffer(buffer, ch, buffer->cursor);
+  write_char_to_line(buffer, ch);
 
   return 0;
 }

@@ -2,11 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
-#include <termios.h>
+
 #include <unistd.h>
 
 #include "../include/utils.h"
-#include "../include/view.h"
 
 view_t *init_view() {
   clear_view();
@@ -19,7 +18,7 @@ view_t *init_view() {
   view->newt.c_lflag &= ~(ICANON | ECHO);
   tcsetattr(STDIN_FILENO, TCSANOW, &view->newt);
 
-  view_cords_t view_size = get_view_size();
+  cords_t view_size = get_view_size();
   view->view_height = view_size.row;
   view->view_width = view_size.col;
 
@@ -39,7 +38,7 @@ int render_view(view_t *view, buffer_t *buffer) {
 
   draw_content(view, buffer);
 
-  set_cursor(buffer->cursor, buffer->line);
+  set_cursor(buffer->line, buffer->col);
 
   flush_view();
 
@@ -47,7 +46,7 @@ int render_view(view_t *view, buffer_t *buffer) {
 }
 
 int window_resized(int former_row, int former_col) {
-  view_cords_t size = get_view_size();
+  cords_t size = get_view_size();
 
   if (former_row != size.row || former_col != size.col) {
     return 1;
@@ -57,43 +56,33 @@ int window_resized(int former_row, int former_col) {
 }
 
 void draw_info(view_t *view, buffer_t *buffer) {
-  view_cords_t view_size = get_view_size();
+  cords_t view_size = get_view_size();
 
   set_color(WHITE);
 
-  put_str(0, view_size.row, "some random info");
+  put_str(view_size.row, 0, "some random info");
 
   reset_color();
   reset_background_color();
 }
 
-void put_char(int row, int col, char ch) {
-  set_cursor(row, col);
-  putchar(ch);
-}
-
-void put_str(int row, int col, char *str) {
-  set_cursor(row, col);
-  printf("%s", str);
-}
-
 void draw_footer(view_t *view, buffer_t *buffer) {
-  view_cords_t view_size = get_view_size();
+  cords_t view_size = get_view_size();
 
   set_color(BLACK);
   set_background_color(GREEN);
 
   for (int i = 0; i < view_size.col + 1; i++) {
     if (i == 2) {
-      put_str(i, view_size.row - 1, "NOR  ");
+      put_str(view_size.row - 1, i, "NOR  ");
       i += 5;
 
-      put_str(i, view_size.row - 1, buffer->file_path);
+      put_str(view_size.row - 1, i, buffer->file_path);
 
       i += strlen(buffer->file_path) - 1;
 
     } else {
-      put_char(i, view_size.row - 1, ' ');
+      put_char(view_size.row - 1, i, ' ');
     }
   }
 
@@ -102,10 +91,31 @@ void draw_footer(view_t *view, buffer_t *buffer) {
 }
 
 void draw_content(view_t *view, buffer_t *buffer) {
-  put_str(0, 0, buffer->content);
+  for (int i = 0; i < buffer->lines_count; i++) {
+    // draw_line_number(i + 1);
+
+    set_color(WHITE);
+    put_str(i + 1, 1, buffer->all_lines[i]);
+  }
 }
 
-void set_cursor(int x, int y) { printf("\033[%d;%dH", y, x); }
+void draw_line_number(int line) {
+  set_color(RED);
+
+  put_char(line, 1, 'X');
+}
+
+void put_char(int line, int col, char ch) {
+  set_cursor(line, col);
+  putchar(ch);
+}
+
+void put_str(int line, int col, char *str) {
+  set_cursor(line, col);
+  printf("%s", str);
+}
+
+void set_cursor(int line, int col) { printf("\033[%d;%dH", line, col); }
 
 void set_cursor_shape(cursor_shape_t shape) {
   switch (shape) {
@@ -143,16 +153,14 @@ void set_cursor_style(cursor_style_t style) {
   }
 }
 
-view_cords_t get_view_size() {
+cords_t get_view_size() {
   struct winsize view_size;
   ioctl(0, TIOCGWINSZ, &view_size);
 
-  view_cords_t cords = {view_size.ws_col, view_size.ws_row};
+  cords_t cords = {view_size.ws_col, view_size.ws_row};
 
   return cords;
 }
-
-void draw_line_numbers() {}
 
 void set_color(color_t color) {
   switch (color) {

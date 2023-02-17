@@ -7,7 +7,12 @@
 typedef struct CURSOR_STRUCT {
   int col;
   int row;
-} view_cords_t;
+} cords_t;
+
+typedef struct LINE_COLLECTION {
+  char** lines;
+  int lines_count;
+} line_collection_t;
 
 typedef struct VIEW_STRUCT {
   struct termios oldt;
@@ -43,7 +48,9 @@ typedef enum { STYLE_BLINKING, STYLE_STEADY, STYLE_INVISIBLE } cursor_style_t;
 
 extern void kimview();
 
-view_cords_t get_view_size();
+void put_char(int row, int col, char ch);
+
+cords_t get_view_size();
 
 int window_resized(int former_row, int former_col);
 
@@ -69,7 +76,7 @@ void draw_footer(view_t *view, buffer_t *buffer);
 
 void draw_info(view_t *view, buffer_t *buffer);
 
-void draw_line_numbers();
+void draw_line_number(int i);
 
 int render_view(view_t *view, buffer_t *buffer);
 
