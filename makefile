@@ -37,7 +37,7 @@ clean: make_dir
 	rm target/*
 
 ./target/kim: make_dir ./c/include/*.h $(sources)
-	cd rust/view && cargo build --quiet --release
+	# cd rust/view && cargo build --quiet --release
 	gcc -w -Os -o $@ $(sources) -L./rust/view/target/release -lkimview
 	strip $@
 

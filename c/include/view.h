@@ -52,7 +52,7 @@ void put_char(int row, int col, char ch);
 
 cords_t get_view_size();
 
-int window_resized(int former_row, int former_col);
+int window_resized(cords_t former_size);
 
 void draw_content(view_t *view, buffer_t *buffer);
 

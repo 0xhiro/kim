@@ -45,10 +45,10 @@ int render_view(view_t *view, buffer_t *buffer) {
   return 1;
 }
 
-int window_resized(int former_row, int former_col) {
+int window_resized(cords_t former_size) {
   cords_t size = get_view_size();
 
-  if (former_row != size.row || former_col != size.col) {
+  if (former_size.row != size.row || former_size.col != size.col) {
     return 1;
   }
 

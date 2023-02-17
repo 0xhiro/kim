@@ -27,9 +27,7 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
   fds.fd = 0;
   fds.events = POLLIN;
 
-  cords_t size = get_view_size();
-  former_row = size.row;
-  former_col = size.col;
+  cords_t former_size = get_view_size();
 
   render_view(view, buffer);
 
@@ -52,12 +50,10 @@ void main_process(process_t *process, view_t *view, buffer_t *buffer) {
       render_view(view, buffer);
     }
 
-    if (window_resized(former_row, former_col)) {
+    if (window_resized(former_size)) {
       render_view(view, buffer);
 
-      cords_t size = get_view_size();
-      former_row = size.row;
-      former_col = size.col;
+      former_size = get_view_size();
     }
   }
 }
