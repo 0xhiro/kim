@@ -146,24 +146,46 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
 }
 
 void move_right(buffer_t *buffer) {
-  // if (strlen(buffer->all_lines[buffer->line]) + 1 > buffer->col + 1) {
-  buffer->col++;
-  // }
+  if (buffer->col < strlen(buffer->all_lines[buffer->line - 1])) {
+    buffer->col++;
+  } else if (buffer->line < buffer->lines_count) {
+    buffer->line++;
+    buffer->col = 1;
+  }
 }
 
 void move_left(buffer_t *buffer) {
-  // if (buffer->col > 1) {
-  buffer->col--;
-  // }
+  if (buffer->col > 1) {
+    buffer->col--;
+  } else if (buffer->line != 1) {
+    buffer->line--;
+    buffer->col = strlen(buffer->all_lines[buffer->line - 1]);
+  }
 }
 
 void move_up(buffer_t *buffer) {
-  // if (buffer->line > 1) {
-  buffer->line--;
-  // }
+  if (buffer->line != 1) {
+    buffer->line--;
+
+    if (strlen(buffer->all_lines[buffer->line - 1]) > buffer->col) {
+      buffer->col = buffer->col;
+    } else {
+      buffer->col = strlen(buffer->all_lines[buffer->line - 1]);
+    }
+  }
 }
 
-void move_down(buffer_t *buffer) { buffer->line++; }
+void move_down(buffer_t *buffer) {
+  if (buffer->line < buffer->lines_count) {
+    buffer->line++;
+
+    if (strlen(buffer->all_lines[buffer->line - 1]) > buffer->col) {
+      buffer->col = buffer->col;
+    } else {
+      buffer->col = strlen(buffer->all_lines[buffer->line - 1]);
+    }
+  }
+}
 
 process_t *init_process() {
   process_t *process = calloc(1, sizeof(struct PROCESS_STRUCT));
