@@ -43,6 +43,14 @@ int render_view(view_t *view, buffer_t *buffer, process_t *process) {
 
   update_info(process, "");
 
+  if (process->mode == NORMAL) {
+    set_cursor_shape(SHAPE_BLOCK);
+    set_cursor_style(STYLE_STEADY);
+  } else if (process->mode == INSERT) {
+    set_cursor_shape(SHAPE_BAR);
+    set_cursor_style(STYLE_BLINKING);
+  }
+
   flush_view();
 
   return 1;
@@ -117,7 +125,7 @@ void draw_content(view_t *view, buffer_t *buffer) {
   for (int i = 0; i < buffer->lines_count; i++) {
     // draw_line_number(i + 1);
 
-    set_color(WHITE);
+    set_color(YELLOW);
     put_str(i + 1, 1, buffer->all_lines[i]);
   }
 }
@@ -143,36 +151,35 @@ void set_cursor(int line, int col) { printf("\033[%d;%dH", line, col); }
 void set_cursor_shape(cursor_shape_t shape) {
   switch (shape) {
   case SHAPE_DEFAULT:
-    printf("\033[0;0H");
+    printf("\033[0 q");
     break;
-
-  case SHAPE_BAR:
-    printf("\033[0;3H");
-    break;
-
   case SHAPE_BLOCK:
-    printf("\033[0;1H");
+    printf("\033[2 q");
     break;
-
   case SHAPE_UNDERLINE:
-    printf("\033[0;2H");
+    printf("\033[4 q");
     break;
+  case SHAPE_BAR:
+    printf("\033[6 q");
+    break;
+  default:
+    printf("Invalid cursor shape");
   }
 }
 
 void set_cursor_style(cursor_style_t style) {
   switch (style) {
   case STYLE_BLINKING:
-    printf("\033[2m");
+    printf("\033[?12h");
     break;
-
   case STYLE_STEADY:
-    printf("\033[0;1m");
+    printf("\033[?12l");
     break;
-
   case STYLE_INVISIBLE:
-    printf("\033[0;2m");
+    printf("\033[?25l");
     break;
+  default:
+    printf("Invalid cursor style");
   }
 }
 

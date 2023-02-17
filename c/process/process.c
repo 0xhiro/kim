@@ -108,6 +108,8 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
 
 int process_insert(process_t *process, char ch, buffer_t *buffer) {
   if (ch == '\033') {
+    kim_log("processing escape");
+    
     getchar(); // skip the [
     switch (getchar()) {
     case 'A':
@@ -127,22 +129,38 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
 
   switch (ch) {
   // BUG: escape is not registered until three presses
-  case ESCAPE_CHAR:
+  case ESCAPE_CHAR: {
     kim_log("changing to normal mode");
     update_info(process, "now in normal mode");
     process->mode = NORMAL;
-    return 1;
-
-  case '1':
-    kim_log("changing to normal mode");
-    update_info(process, "now in normal mode");
-    process->mode = NORMAL;
-    return 1;
+    break;
   }
 
-  write_char_to_line(buffer, ch);
+  case 'a': {
+    kim_log("changing to normal mode");
+    update_info(process, "now in normal mode");
+    process->mode = NORMAL;
+    break;
+  }
 
-  return 0;
+  // BUG: backspace is not being recognized
+  case 's': {
+    delete_char_in_line(buffer);
+    break;
+  }
+
+  case '\n': {
+    write_newline_to_line(buffer);
+    break;
+  }
+
+  default: {
+    write_char_to_line(buffer, ch);
+    break;
+  }
+  }
+
+  return 1;
 }
 
 void move_right(buffer_t *buffer) {

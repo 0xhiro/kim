@@ -18,13 +18,49 @@ buffer_t *init_buffer() {
 void free_buffer(buffer_t *buffer) { free(buffer); }
 
 void write_char_to_line(buffer_t *buffer, char ch) {
+  char *current_line = buffer->all_lines[buffer->line - 1];
+
+  int len = strlen(current_line);
+
+  int index = buffer->col - 1;
+
+  buffer->all_lines[buffer->line - 1] = realloc(current_line, len + 2);
+
+  memmove(current_line + index + 1, current_line + index, len - index + 1);
+
+  current_line[index] = ch;
+
+  buffer->col++;
+}
+
+void delete_char_in_line(buffer_t *buffer) {
+  char *current_line = buffer->all_lines[buffer->line - 1];
+
+  int len = strlen(current_line);
+
+  int index = buffer->col - 2;
+
+  memmove(current_line + index, current_line + index + 1, len - index);
+
+  buffer->all_lines[buffer->line - 1] = realloc(current_line, len);
+
+   buffer->col--;
+}
+
+void write_newline_to_line(buffer_t *buffer) {
+  //
+
+  kim_log("writing newline");
+}
+
+void replace_char_in_line(buffer_t *buffer, char ch) {
   buffer->all_lines[buffer->line - 1][buffer->col - 1] = ch;
 }
 
-
 void write_buffer_to_file(buffer_t *buffer) {
   kim_log("writing buffer to file");
-  write_lines_to_file(buffer->file_path, buffer->all_lines, buffer->lines_count);
+  write_lines_to_file(buffer->file_path, buffer->all_lines,
+                      buffer->lines_count);
 }
 
 void read_file_to_buffer(buffer_t *buffer, char *file_path) {

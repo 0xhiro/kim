@@ -109,6 +109,8 @@ line_collection_t read_file_to_lines(char *filename) {
     line = NULL;
   }
 
+  free(line);
+
   // Close the file
   fclose(fp);
 

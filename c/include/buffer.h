@@ -12,6 +12,10 @@ typedef struct BUFFER_STRUCT {
 
 buffer_t *init_buffer();
 
+void delete_char_in_line(buffer_t *buffer);
+
+void write_newline_to_line(buffer_t *buffer);
+
 void dump_buffer(buffer_t *buffer);
 
 void free_buffer(buffer_t *buffer);
