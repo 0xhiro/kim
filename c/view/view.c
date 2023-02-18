@@ -30,7 +30,7 @@ view_t *init_view() {
 }
 
 int render_view(view_t *view, buffer_t *buffer, process_t *process) {
-  kim_log("rendering view");
+  // kim_log("rendering view");
   clear_view();
 
   draw_info(view, process);

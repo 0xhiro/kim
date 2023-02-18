@@ -33,22 +33,69 @@ void write_char_to_line(buffer_t *buffer, char ch) {
   buffer->col++;
 }
 
-void delete_char_in_line(buffer_t *buffer) {
-  char *current_line = buffer->all_lines[buffer->line - 1];
+void write_str_to_line(buffer_t *buffer, int line, char *str) {
+  char *current_line = buffer->all_lines[line];
 
   int len = strlen(current_line);
+  int str_len = strlen(str);
 
-  int index = buffer->col - 2;
+  int index = buffer->col - 1;
 
-  memmove(current_line + index, current_line + index + 1, len - index);
+  buffer->all_lines[line] = realloc(current_line, len + str_len + 1);
 
-  buffer->all_lines[buffer->line - 1] = realloc(current_line, len);
+  memmove(current_line + index + str_len, current_line + index,
+          len - index + 1);
 
-   buffer->col--;
+  memcpy(current_line + index, str, str_len);
+
+  buffer->col += str_len;
+}
+
+void remove_line_from_buffer(buffer_t *buffer, int index) {
+  if (index < 0 || index >= buffer->lines_count) {
+    // index is out of bounds, do nothing
+    return;
+  }
+
+  // free the memory of the line being removed
+  free(buffer->all_lines[index]);
+
+  // shift the following lines to the left
+  for (int i = index + 1; i < buffer->lines_count; i++) {
+    buffer->all_lines[i - 1] = buffer->all_lines[i];
+  }
+
+  // decrease the line count
+  buffer->lines_count--;
+}
+
+void delete_char_in_line(buffer_t *buffer) {
+  if (buffer->col > 1) {
+    char *current_line = buffer->all_lines[buffer->line - 1];
+
+    int len = strlen(current_line);
+
+    int index = buffer->col - 2;
+
+    memmove(current_line + index, current_line + index + 1, len - index);
+
+    buffer->all_lines[buffer->line - 1] = realloc(current_line, len);
+
+    buffer->col--;
+  } else if (buffer->line > 1) {
+    // TODO: implementing deleting first char and merging to top line
+
+    buffer->col = strlen(buffer->all_lines[buffer->line - 2]);
+
+    write_str_to_line(buffer, buffer->line - 2, buffer->all_lines[buffer->line - 1]);
+
+    remove_line_from_buffer(buffer, buffer->line - 1);
+    buffer->line--;
+  }
 }
 
 void write_newline_to_line(buffer_t *buffer) {
-  //
+  // TODO: implement newlines
 
   kim_log("writing newline");
 }
