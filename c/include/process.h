@@ -10,6 +10,8 @@ typedef struct PROCESS_STRUCT {
   process_mode_t mode;
 
   char *info;
+
+  struct termios oldt;
 } process_t;
 
 void move_right(buffer_t *buffer);

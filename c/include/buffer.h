@@ -1,6 +1,8 @@
 #ifndef BUFFER_H
 #define BUFFER_H
 
+#include <termios.h>
+
 typedef struct BUFFER_STRUCT {
   char **all_lines;
   int lines_count;
@@ -8,6 +10,8 @@ typedef struct BUFFER_STRUCT {
   char *file_path;
   int line;
   int col;
+
+  struct termios oldt;
 } buffer_t;
 
 buffer_t *init_buffer();

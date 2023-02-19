@@ -27,6 +27,9 @@ int main() {
 
   process_t *process = init_process();
 
+  buffer->oldt = view->oldt;
+  process->oldt = view->oldt;
+
   main_process(process, view, buffer);
 
   exit_view(view);

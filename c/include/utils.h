@@ -11,6 +11,8 @@ void write_file(char *filename, char *contents);
 
 void kim_log(const char *format, ...);
 
+void kim_error(struct termios *oldt, const char *format, ...);
+
 int file_has_extension(const char *file_name, const char *extension);
 
 char *read_file_to_string(const char *filename);

@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <unistd.h>
+
 #include "include/utils.h"
 #include "include/view.h"
 
@@ -25,7 +27,7 @@ void write_lines_to_file(char *filename, char **content, int lines_count) {
     exit(1);
   }
 
-   for (int i = 0; i < lines_count; i++) {
+  for (int i = 0; i < lines_count; i++) {
     fprintf(file, "%s", content[i]);
   }
 
@@ -50,6 +52,35 @@ void kim_log(const char *format, ...) {
 
   fclose(file); // close the file
   va_end(args);
+}
+
+void kim_error(struct termios *oldt, const char *format, ...) {
+  va_list args;
+  va_start(args, format);
+
+  char *logs_path = "./target/kim-logs.txt";
+  FILE *file = fopen(logs_path, "a"); // open file for writing
+
+  if (file == NULL) {
+    printf("Error opening file!\n");
+    va_end(args);
+    return;
+  }
+
+  vfprintf(file, format, args); // write contents to file
+  fprintf(file, "%s", "\n");    // write newline to file
+
+  fclose(file); // close the file
+  va_end(args);
+
+  tcsetattr(STDIN_FILENO, TCSANOW, oldt);
+
+  set_color(DEFAULT); // Reset text color to default
+  set_background_color(DEFAULT);
+
+  clear_view();
+
+  exit(1);
 }
 
 void dump_logs() {

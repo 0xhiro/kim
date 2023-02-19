@@ -116,7 +116,14 @@ void draw_footer(view_t *view, buffer_t *buffer, process_t *process) {
 
   put_str(view_size.row - 1, i, col_str);
 
-  i += strlen(col_str);
+  i += strlen(col_str) + 5;
+
+  char len_str[10];
+  sprintf(len_str, "%lu", strlen(buffer->all_lines[buffer->line - 1]) );
+  put_str(view_size.row - 1, i, "len: ");
+  i += 5;
+  put_str(view_size.row - 1, i, len_str);
+  i += strlen(len_str);
 
   reset_background_color();
 }

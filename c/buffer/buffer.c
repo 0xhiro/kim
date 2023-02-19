@@ -22,17 +22,17 @@ void write_char_to_line(buffer_t *buffer, int line, char ch) {
 
   int index = buffer->col - 1;
 
-  kim_log("here!!");
+  if(index > len){
+    kim_error(&buffer->oldt, "index is greater");
+  }
+  
   buffer->all_lines[line - 1] = realloc(current_line, len + 2);
 
-  kim_log("here!!");
   memmove(current_line + index + 1, current_line + index, len - index + 1);
 
   current_line[index] = ch;
 
   buffer->col++;
-
-  kim_log("here!!");
 }
 
 void write_str_to_line(buffer_t *buffer, int line, char *str) {
@@ -142,11 +142,8 @@ void write_newline_to_line(buffer_t *buffer) {
       break;
     }
 
-    int theline = buffer->line - 1;
-    kim_log("line is %d", theline);
-    write_char_to_line(buffer, theline, 'x');
+    write_char_to_line(buffer, buffer->line + 1, 'x');
 
-    // kim_log("here!!");
     buffer->col++;
     delete_char_in_line(buffer, buffer->line);
 
