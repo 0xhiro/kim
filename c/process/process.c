@@ -109,7 +109,7 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
 int process_insert(process_t *process, char ch, buffer_t *buffer) {
   if (ch == '\033') {
     kim_log("processing escape");
-    
+
     getchar(); // skip the [
     switch (getchar()) {
     case 'A':
@@ -145,7 +145,7 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
 
   // BUG: backspace is not being recognized
   case 's': {
-    delete_char_in_line(buffer);
+    delete_char_in_line(buffer, buffer->line);
     break;
   }
 
@@ -155,7 +155,7 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   }
 
   default: {
-    write_char_to_line(buffer, ch);
+    write_char_to_line(buffer, buffer->line, ch);
     break;
   }
   }

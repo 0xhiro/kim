@@ -15,22 +15,24 @@ buffer_t *init_buffer() {
   return buffer;
 }
 
-void free_buffer(buffer_t *buffer) { free(buffer); }
-
-void write_char_to_line(buffer_t *buffer, char ch) {
-  char *current_line = buffer->all_lines[buffer->line - 1];
+void write_char_to_line(buffer_t *buffer, int line, char ch) {
+  char *current_line = buffer->all_lines[line - 1];
 
   int len = strlen(current_line);
 
   int index = buffer->col - 1;
 
-  buffer->all_lines[buffer->line - 1] = realloc(current_line, len + 2);
+  kim_log("here!!");
+  buffer->all_lines[line - 1] = realloc(current_line, len + 2);
 
+  kim_log("here!!");
   memmove(current_line + index + 1, current_line + index, len - index + 1);
 
   current_line[index] = ch;
 
   buffer->col++;
+
+  kim_log("here!!");
 }
 
 void write_str_to_line(buffer_t *buffer, int line, char *str) {
@@ -51,7 +53,9 @@ void write_str_to_line(buffer_t *buffer, int line, char *str) {
   buffer->col += str_len;
 }
 
-void remove_line_from_buffer(buffer_t *buffer, int index) {
+void remove_line_from_buffer(buffer_t *buffer, int line) {
+  int index = line - 1;
+
   if (index < 0 || index >= buffer->lines_count) {
     // index is out of bounds, do nothing
     return;
@@ -69,9 +73,9 @@ void remove_line_from_buffer(buffer_t *buffer, int index) {
   buffer->lines_count--;
 }
 
-void delete_char_in_line(buffer_t *buffer) {
+void delete_char_in_line(buffer_t *buffer, int line) {
   if (buffer->col > 1) {
-    char *current_line = buffer->all_lines[buffer->line - 1];
+    char *current_line = buffer->all_lines[line - 1];
 
     int len = strlen(current_line);
 
@@ -79,23 +83,81 @@ void delete_char_in_line(buffer_t *buffer) {
 
     memmove(current_line + index, current_line + index + 1, len - index);
 
-    buffer->all_lines[buffer->line - 1] = realloc(current_line, len);
+    buffer->all_lines[line - 1] = realloc(current_line, len);
 
     buffer->col--;
-  } else if (buffer->line > 1) {
-    // TODO: implementing deleting first char and merging to top line
+  } else if (line > 1) {
+    int thecol = strlen(buffer->all_lines[line - 2]);
 
-    buffer->col = strlen(buffer->all_lines[buffer->line - 2]);
+    buffer->col = thecol;
 
-    write_str_to_line(buffer, buffer->line - 2, buffer->all_lines[buffer->line - 1]);
+    write_str_to_line(buffer, line - 2, buffer->all_lines[line - 1]);
 
-    remove_line_from_buffer(buffer, buffer->line - 1);
-    buffer->line--;
+    buffer->col = thecol;
+
+    remove_line_from_buffer(buffer, line);
+    buffer->line = line - 1;
   }
+}
+
+void add_line_to_buffer(buffer_t *buffer, int index) {
+  if (index < 0 || index > buffer->lines_count) {
+    // index is out of bounds, do nothing
+    return;
+  }
+
+  // increase the size of the all_lines array
+  buffer->all_lines =
+      realloc(buffer->all_lines, (buffer->lines_count + 1) * sizeof(char *));
+
+  // shift the existing lines to the right
+  for (int i = buffer->lines_count; i > index; i--) {
+    buffer->all_lines[i] = buffer->all_lines[i - 1];
+  }
+
+  // allocate memory for the new line
+  char *new_line = malloc(2 * sizeof(char));
+
+  // copy the line content to the new buffer
+  strcpy(new_line, "\n");
+
+  // insert the new line at the specified index
+  buffer->all_lines[index] = new_line;
+
+  // increase the line count
+  buffer->lines_count++;
 }
 
 void write_newline_to_line(buffer_t *buffer) {
   // TODO: implement newlines
+
+  add_line_to_buffer(buffer, buffer->line);
+
+  int i = 0;
+  int times = strlen(buffer->all_lines[buffer->line - 1]) - buffer->col;
+
+  for (;;) {
+
+    if (i >= times) {
+      break;
+    }
+
+    int theline = buffer->line - 1;
+    kim_log("line is %d", theline);
+    write_char_to_line(buffer, theline, 'x');
+
+    // kim_log("here!!");
+    buffer->col++;
+    delete_char_in_line(buffer, buffer->line);
+
+    i++;
+
+    kim_log("del");
+  }
+
+  buffer->line++;
+
+  buffer->col = 1;
 
   kim_log("writing newline");
 }

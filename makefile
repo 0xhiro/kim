@@ -23,7 +23,7 @@ uninstall:
 	sudo rm /usr/local/bin/kim
 
 install-debug:
-	make all
+	make debug
 	sudo cp ./target/kim-debug /usr/local/bin
 
 uninstall-debug:

@@ -25,9 +25,6 @@ int main() {
 
   view_t *view = init_view();
 
-  // for (;;) {
-  // }
-
   process_t *process = init_process();
 
   main_process(process, view, buffer);
@@ -40,7 +37,7 @@ int main() {
 
   // dump_logs();
   dump_file(file_path);
-  // kim_log("\033c");
+  kim_log("\033c");
 
   return 0;
 }
