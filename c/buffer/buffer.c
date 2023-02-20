@@ -15,50 +15,53 @@ buffer_t *init_buffer() {
   return buffer;
 }
 
-void write_char_to_line(buffer_t *buffer, int line, char ch) {
+void write_char_to_line(buffer_t *buffer, int line, int col, char ch) {
   char *current_line = buffer->all_lines[line - 1];
 
   int len = strlen(current_line);
 
-  int index = buffer->col - 1;
+  int index = col - 1;
 
-  if(index > len){
+  if (index > len) {
     kim_error(&buffer->oldt, "index is greater");
   }
-  
+
   buffer->all_lines[line - 1] = realloc(current_line, len + 2);
 
   memmove(current_line + index + 1, current_line + index, len - index + 1);
 
   current_line[index] = ch;
-
-  buffer->col++;
 }
 
-void write_str_to_line(buffer_t *buffer, int line, char *str) {
-  char *current_line = buffer->all_lines[line];
+void write_str_to_line(buffer_t *buffer, int line, int col, char *str) {
+  if (line > buffer->lines_count) {
+    kim_error(&buffer->oldt, "line is greater");
+  }
 
-  int len = strlen(current_line);
-  int str_len = strlen(str);
+  char *current_line = buffer->all_lines[line - 1];
 
-  int index = buffer->col - 1;
+  int i = 0;
+  int j = col;
 
-  buffer->all_lines[line] = realloc(current_line, len + str_len + 1);
+  int len = strlen(str);
 
-  memmove(current_line + index + str_len, current_line + index,
-          len - index + 1);
+  while (i < len) {
+    char current_char = str[i];
 
-  memcpy(current_line + index, str, str_len);
+    kim_log("char is: %c", current_char);
 
-  buffer->col += str_len;
+    write_char_to_line(buffer, line, j, current_char);
+
+    i++;
+    j++;
+  }
 }
 
 void remove_line_from_buffer(buffer_t *buffer, int line) {
   int index = line - 1;
 
   if (index < 0 || index >= buffer->lines_count) {
-    // index is out of bounds, do nothing
-    return;
+    kim_error(&buffer->oldt, "cannot delete invalid line");
   }
 
   // free the memory of the line being removed
@@ -73,29 +76,36 @@ void remove_line_from_buffer(buffer_t *buffer, int line) {
   buffer->lines_count--;
 }
 
-void delete_char_in_line(buffer_t *buffer, int line) {
-  if (buffer->col > 1) {
-    char *current_line = buffer->all_lines[line - 1];
+void delete_char_in_line(buffer_t *buffer, int line, int col) {
+  if (line > buffer->lines_count) {
+    kim_error(&buffer->oldt, "cannot delete more than existing lines");
+  }
 
-    int len = strlen(current_line);
+  char *current_line = buffer->all_lines[line - 1];
 
-    int index = buffer->col - 2;
+  int len = strlen(current_line);
+
+  kim_log("del col is: %d", col);
+  kim_log("del len is: %d", len);
+
+  if (col > len) {
+    kim_error(&buffer->oldt, "col is greater than len");
+  }
+
+  if (col > 1) {
+    int index = col - 2;
 
     memmove(current_line + index, current_line + index + 1, len - index);
 
     buffer->all_lines[line - 1] = realloc(current_line, len);
-
-    buffer->col--;
-  } else if (line > 1) {
+  } else if (col == 1 && line > 1) {
     int thecol = strlen(buffer->all_lines[line - 2]);
 
-    buffer->col = thecol;
+    kim_log("thecol is: %d", thecol);
 
-    write_str_to_line(buffer, line - 2, buffer->all_lines[line - 1]);
+    write_str_to_line(buffer, line - 1, thecol, buffer->all_lines[line - 1]);
 
-    buffer->col = thecol;
-
-    remove_line_from_buffer(buffer, line);
+    // remove_line_from_buffer(buffer, line);
     buffer->line = line - 1;
   }
 }
@@ -137,15 +147,16 @@ void write_newline_to_line(buffer_t *buffer) {
   int times = strlen(buffer->all_lines[buffer->line - 1]) - buffer->col;
 
   for (;;) {
-
     if (i >= times) {
       break;
     }
 
-    write_char_to_line(buffer, buffer->line + 1, 'x');
+    int main_col = buffer->col;
 
-    buffer->col++;
-    delete_char_in_line(buffer, buffer->line);
+    write_char_to_line(buffer, buffer->line + 1, i + 1,
+                       buffer->all_lines[buffer->line - 1][buffer->col - 1]);
+
+    delete_char_in_line(buffer, buffer->line, main_col + 1);
 
     i++;
 

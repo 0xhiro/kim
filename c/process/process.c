@@ -145,7 +145,12 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
 
   // BUG: backspace is not being recognized
   case 's': {
-    delete_char_in_line(buffer, buffer->line);
+    delete_char_in_line(buffer, buffer->line, buffer->col);
+
+    if (buffer->col > 1) {
+      buffer->col--;
+    }
+
     break;
   }
 
@@ -155,7 +160,8 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   }
 
   default: {
-    write_char_to_line(buffer, buffer->line, ch);
+    write_char_to_line(buffer, buffer->line, buffer->col, ch);
+    buffer->col++;
     break;
   }
   }

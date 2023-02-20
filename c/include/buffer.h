@@ -16,7 +16,7 @@ typedef struct BUFFER_STRUCT {
 
 buffer_t *init_buffer();
 
-void delete_char_in_line(buffer_t *buffer, int line);
+void delete_char_in_line(buffer_t *buffer, int line, int col);
 
 void write_newline_to_line(buffer_t *buffer);
 
@@ -28,6 +28,6 @@ void write_buffer_to_file(buffer_t *buffer);
 
 void read_file_to_buffer(buffer_t *buffer, char *file_path);
 
-void write_char_to_line(buffer_t *buffer, int line, char ch);
+void write_char_to_line(buffer_t *buffer, int line, int col, char ch);
 
 #endif
