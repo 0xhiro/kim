@@ -1,11 +1,16 @@
-let out = "./target/kim"
+fn main() {
+    run("echo building kim");
 
-fn main(){
-  run("echo building kim");
+    run("cd ../rust/view && cargo build --release");
 
-  run("cd rust/view && cargo build --quiet --release");
+    let build_out = "./target/kim";
+    let build_cmd = "gcc -w -Os -o" + build_out;
+    // run("gcc -w -Os -o ./target/kim $(sources) -L./rust/view/target/release -lkimview");
 
-  run("gcc -w -Os -o $@ $(sources) -L./rust/view/target/release -lkimview");
-
-  run("strip $@");
+    run("strip ../target/kim");
 }
+
+// ./target/kim: make_dir ./c/include/*.h $(sources)
+// 	# cd rust/view && cargo build --quiet --release
+// 	gcc -w -Os -o $@ $(sources) -L./rust/view/target/release -lkimview
+// 	strip $@
