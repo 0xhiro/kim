@@ -1,13 +1,20 @@
 fn main() {
-    run("echo building kim");
+    cmd("echo building kim");
 
-    run("cd ../rust/view && cargo build --release");
+    cmd("cd ../rust/view && cargo build --release");
 
-    let build_out = "./target/kim";
-    let build_cmd = "gcc -w -Os -o" + build_out;
-    // run("gcc -w -Os -o ./target/kim $(sources) -L./rust/view/target/release -lkimview");
+    let sources = "$(find ../c -name '*.c')";
+    let build_out = "../target/kim ";
+    let build_cmd = strcat("gcc -w -Os -o ", build_out);
+    build_cmd = strcat(build_cmd, sources);
 
-    run("strip ../target/kim");
+    build_cmd = strcat(build_cmd, " -L../rust/view/target/release -lkimview");
+
+    println(build_cmd);
+
+    cmd(build_cmd);
+
+    cmd("strip ../target/kim");
 }
 
 // ./target/kim: make_dir ./c/include/*.h $(sources)

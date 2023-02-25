@@ -1,7 +1,7 @@
 fn main(){
-  run("echo running kim");
+  cmd("echo running kim");
 
-  run("chad all");
+  cmd("chad all");
 
-  run("../target/kim");
+  cmd("cd .. && ./target/kim");
 }

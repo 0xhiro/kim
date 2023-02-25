@@ -1,4 +1,4 @@
-MAKEFLAGS += --silent
+# MAKEFLAGS += --silent
 
 test_file = $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
 
