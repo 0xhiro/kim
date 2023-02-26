@@ -16,9 +16,9 @@ buffer_t *init_buffer() {
 }
 
 void write_char_to_line(buffer_t *buffer, int line, int col, char ch) {
-  char *current_line = buffer->all_lines[line - 1];
+  char *content = buffer->all_lines[line - 1];
 
-  int len = strlen(current_line);
+  int len = strlen(content);
 
   int index = col - 1;
 
@@ -26,11 +26,13 @@ void write_char_to_line(buffer_t *buffer, int line, int col, char ch) {
     kim_error(&buffer->oldt, "index is greater");
   }
 
-  buffer->all_lines[line - 1] = realloc(current_line, len + 2);
+  buffer->all_lines[line - 1] = realloc(content, len + 2);
 
-  memmove(current_line + index + 1, current_line + index, len - index + 1);
+  content = buffer->all_lines[line - 1];
 
-  current_line[index] = ch;
+  memmove(content + index + 1, content + index, len - index + 1);
+
+  content[index] = ch;
 }
 
 void write_str_to_line(buffer_t *buffer, int line, int col, char *str) {
@@ -38,17 +40,17 @@ void write_str_to_line(buffer_t *buffer, int line, int col, char *str) {
     kim_error(&buffer->oldt, "line is greater");
   }
 
-  char *current_line = buffer->all_lines[line - 1];
+  // char *content = buffer->all_lines[line - 1];
 
   int i = 0;
   int j = col;
 
   int len = strlen(str);
 
-  while (i < len) {
+  while (i < len - 1) {
     char current_char = str[i];
 
-    kim_log("char is: %c", current_char);
+    kim_log("char is: %c, j is: %d", current_char, j);
 
     write_char_to_line(buffer, line, j, current_char);
 
@@ -85,8 +87,8 @@ void delete_char_in_line(buffer_t *buffer, int line, int col) {
 
   int len = strlen(current_line);
 
-  kim_log("del col is: %d", col);
-  kim_log("del len is: %d", len);
+  // kim_log("del col is: %d", col);
+  // kim_log("del len is: %d", len);
 
   if (col > len) {
     kim_error(&buffer->oldt, "col is greater than len");
@@ -105,8 +107,10 @@ void delete_char_in_line(buffer_t *buffer, int line, int col) {
 
     write_str_to_line(buffer, line - 1, thecol, buffer->all_lines[line - 1]);
 
-    // remove_line_from_buffer(buffer, line);
+    remove_line_from_buffer(buffer, line);
     buffer->line = line - 1;
+
+    buffer->col = thecol + 1;
   }
 }
 
