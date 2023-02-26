@@ -4,6 +4,7 @@
 #include "view.h"
 
 #define ESCAPE_CHAR '\033'
+#define BACKSPACE_CHAR 127
 
 void update_screen(char ch);
 

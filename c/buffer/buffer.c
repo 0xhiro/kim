@@ -50,8 +50,6 @@ void write_str_to_line(buffer_t *buffer, int line, int col, char *str) {
   while (i < len - 1) {
     char current_char = str[i];
 
-    kim_log("char is: %c, j is: %d", current_char, j);
-
     write_char_to_line(buffer, line, j, current_char);
 
     i++;
@@ -102,8 +100,6 @@ void delete_char_in_line(buffer_t *buffer, int line, int col) {
     buffer->all_lines[line - 1] = realloc(current_line, len);
   } else if (col == 1 && line > 1) {
     int thecol = strlen(buffer->all_lines[line - 2]);
-
-    kim_log("thecol is: %d", thecol);
 
     write_str_to_line(buffer, line - 1, thecol, buffer->all_lines[line - 1]);
 
@@ -163,15 +159,11 @@ void write_newline_to_line(buffer_t *buffer) {
     delete_char_in_line(buffer, buffer->line, main_col + 1);
 
     i++;
-
-    kim_log("del");
   }
 
   buffer->line++;
 
   buffer->col = 1;
-
-  kim_log("writing newline");
 }
 
 void replace_char_in_line(buffer_t *buffer, char ch) {

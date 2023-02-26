@@ -107,6 +107,9 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
 }
 
 int process_insert(process_t *process, char ch, buffer_t *buffer) {
+
+  // kim_log("ch is %d", ch);
+
   if (ch == '\033') {
     kim_log("processing escape");
 
@@ -124,17 +127,21 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
     case 'D':
       move_left(buffer); // left arrow
       return 0;
+
+    // case 27: {
+    //   kim_log("changing to normal mode");
+    //   update_info(process, "now in normal mode");
+    //   process->mode = NORMAL;
+    //   break;
+    // }
+
+    default:
+      kim_error(&process->oldt, "unhandled escape character %d", ch);
     }
   }
 
   switch (ch) {
-  // BUG: escape is not registered until three presses
-  case ESCAPE_CHAR: {
-    kim_log("changing to normal mode");
-    update_info(process, "now in normal mode");
-    process->mode = NORMAL;
-    break;
-  }
+    // BUG: escape is not registered until three presses
 
   case 'a': {
     kim_log("changing to normal mode");
@@ -144,7 +151,7 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   }
 
   // BUG: backspace is not being recognized
-  case 's': {
+  case BACKSPACE_CHAR: {
     delete_char_in_line(buffer, buffer->line, buffer->col);
 
     if (buffer->col > 1) {
@@ -169,6 +176,7 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
   return 1;
 }
 
+// BUG: the last char in the last line appears to be orphaned
 void move_right(buffer_t *buffer) {
   if (buffer->col < strlen(buffer->all_lines[buffer->line - 1])) {
     buffer->col++;
