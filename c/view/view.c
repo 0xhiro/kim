@@ -39,7 +39,7 @@ int render_view(view_t *view, buffer_t *buffer, process_t *process) {
 
   draw_content(view, buffer);
 
-  set_cursor(buffer->line, buffer->col);
+  set_cursor(buffer->line, buffer->col + 5);
 
   update_info(process, "");
 
@@ -137,17 +137,21 @@ void draw_footer(view_t *view, buffer_t *buffer, process_t *process) {
 
 void draw_content(view_t *view, buffer_t *buffer) {
   for (int i = 0; i < buffer->lines_count; i++) {
-    // draw_line_number(i + 1);
+    draw_line_number(i + 1);
 
     set_color(YELLOW);
-    put_str(i + 1, 1, buffer->all_lines[i]);
+    put_str(i + 1, 6, buffer->all_lines[i]);
   }
 }
 
 void draw_line_number(int line) {
   set_color(RED);
 
-  put_char(line, 1, 'X');
+  char line_str[10];
+
+  sprintf(line_str, "%d", line);
+
+  put_str(line, 1, line_str);
 }
 
 void put_char(int line, int col, char ch) {
