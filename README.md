@@ -20,6 +20,9 @@ kim is a modern, tiny and intuitive terminal-based text editor
 * Blazingly fast ⚡⚡⚡
 * Light and compact, with focus on simplicity
 * Very tiny, as small as 22KB
+* Raw binary/hex editing
+* No dependencies or external files
+* Extendable with Chad scripts
 
 ## Quick start
 
