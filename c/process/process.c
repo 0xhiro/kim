@@ -108,7 +108,7 @@ int process_normal(process_t *process, char ch, buffer_t *buffer) {
 
 int process_insert(process_t *process, char ch, buffer_t *buffer) {
 
-  // kim_log("ch is %d", ch);
+  kim_log("ch is %d", ch);
 
   if (ch == '\033') {
     kim_log("processing escape");
@@ -128,27 +128,27 @@ int process_insert(process_t *process, char ch, buffer_t *buffer) {
       move_left(buffer); // left arrow
       return 0;
 
-    // case 27: {
-    //   kim_log("changing to normal mode");
-    //   update_info(process, "now in normal mode");
-    //   process->mode = NORMAL;
-    //   break;
-    // }
+    case 27: {
+      kim_log("changing to normal mode");
+      update_info(process, "now in normal mode");
+      process->mode = NORMAL;
+      return 0;
+    }
 
     default:
       kim_error(&process->oldt, "unhandled escape character %d", ch);
+      return 0;
     }
   }
 
   switch (ch) {
-    // BUG: escape is not registered until three presses
 
-  case 'a': {
-    kim_log("changing to normal mode");
-    update_info(process, "now in normal mode");
-    process->mode = NORMAL;
-    break;
-  }
+  // case 'a': {
+  //   kim_log("changing to normal mode");
+  //   update_info(process, "now in normal mode");
+  //   process->mode = NORMAL;
+  //   break;
+  // }
 
   // BUG: backspace is not being recognized
   case BACKSPACE_CHAR: {

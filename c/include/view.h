@@ -91,4 +91,6 @@ void set_cursor(int row, int column);
 
 void put_str(int row, int col, char *str);
 
+void clear_line(int line);
+
 #endif

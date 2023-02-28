@@ -160,8 +160,23 @@ void put_char(int line, int col, char ch) {
 }
 
 void put_str(int line, int col, char *str) {
+  // clear_line(line);
+
   set_cursor(line, col);
+
   printf("%s", str);
+}
+
+void clear_line(int line) {
+  set_cursor(line, 0);
+
+  printf("\033[2K");
+}
+
+void clear_col(int line, int col) {
+  set_cursor(line, col);
+
+  putchar(' ');
 }
 
 void set_cursor(int line, int col) { printf("\033[%d;%dH", line, col); }
