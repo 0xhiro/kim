@@ -1,4 +1,3 @@
-
 [![Discord](https://img.shields.io/discord/1018936651612967043)](https://discord.gg/yMEKS2hk)
 ![GitHub top language](https://img.shields.io/github/languages/top/0xhiro/chad)
 
