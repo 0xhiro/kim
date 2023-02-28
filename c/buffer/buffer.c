@@ -179,7 +179,7 @@ void write_buffer_to_file(buffer_t *buffer) {
 void read_file_to_buffer(buffer_t *buffer, char *file_path) {
   kim_log("reading file to buffer");
 
-  line_collection_t collection = read_file_to_lines("./test/test2.txt");
+  line_collection_t collection = read_file_to_lines(file_path);
 
   buffer->all_lines = collection.lines;
   buffer->lines_count = collection.lines_count;

@@ -5,8 +5,8 @@
 
 #include <unistd.h>
 
-#include "include/utils.h"
-#include "include/view.h"
+#include "../include/utils.h"
+#include "../include/view.h"
 
 void write_file(char *filename, char *content) {
   FILE *file = fopen(filename, "w"); // open file for writing
